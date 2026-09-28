@@ -40,7 +40,7 @@ API-invokable functions must be declared in **`product_config.<product>.backend_
 
 ### 4. OAuth
 
-Apps using OAuth must declare **`product_config.<product>.app_oauth_config`** with provider name(s) and required fields (`client_id`, `client_secret`, `authorize_url`, `token_url`, `options` as needed).
+Apps using OAuth must declare **`product_config.<product>.app_oauth_config`** with provider name(s). Each provider **must** have `client_id`, `client_secret`, `authorize_url`, `token_url`, and an `options` object (its fields are provider-specific; use `{}` if none apply).
 
 ### 5. Consistency
 
@@ -253,7 +253,8 @@ Nested under **`product_config.<product>.app_oauth_config`**.
 ```
 
 - **Keys:** OAuth provider names.
-- **Value:** Object with `client_id`, `client_secret`, `authorize_url`, `token_url`, and optional `options` (e.g. `response_type`, `access_type`, `prompt`, **`scope`** as array of strings).
+- **Value:** Object. **Required fields:** `client_id` (string), `client_secret` (string), `authorize_url` (string), `token_url` (string), `options` (object).
+- **`options`:** Required, but every field inside it is optional and provider-specific: `response_type` (string), `access_type` (string), `prompt` (string), **`scope`** (array of strings). Use `"options": {}` if the provider needs none.
 
 ---
 
@@ -269,4 +270,4 @@ Nested under **`product_config.<product>.app_oauth_config`**.
 | Under product | `event_listener_functions` | object | `{ "<eventName>": { handler: "<exportedFnName>" } }` — include **`onScheduledEvent`** → handler for each schedule trigger |
 | Under product | `backend_api_functions` | object | `{ "<fnName>": { timeout?: number } }` |
 | Under product | `installation_parameters` | object | `{ "<paramKey>": { data-bind?, display_name, description, type, required, secure?, default_value? } }` — `type` must be one of: `text`, `paragraph`, `dropdown`, `email`, `number`, `phone_number`, `date`, `url`, `radio`, `checkbox`, `multiselect`, `domain`, `api_key` |
-| Under product | `app_oauth_config` | object | `{ "<provider>": { client_id, client_secret, authorize_url, token_url, options? } }` |
+| Under product | `app_oauth_config` | object | `{ "<provider>": { client_id, client_secret, authorize_url, token_url, options: { response_type?, access_type?, prompt?, scope? } } }` |
