@@ -22,7 +22,7 @@
 - **Idempotency:** External push operations must prevent duplicates. {{idempotency_approach}}
 - **Error handling:** Non-200 responses must be handled explicitly. {{error_handling_approach}}
 - **Rate limiting:** 429 responses must be retried with backoff. {{rate_limit_approach}}
-- **Secrets:** Credentials only via installation_parameters or app_oauth_config; no hardcoding.
+- **Secrets:** Credentials only via installation_parameters or oauth_config; no hardcoding.
 
 ## Security
 

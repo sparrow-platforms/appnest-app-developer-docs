@@ -7,7 +7,7 @@ All apps must declare execution capabilities correctly in `manifest.json`. The m
 **Cross-check (platform manifest ~2.0):** The following JSON shape is valid and matches this document—only the **values** (domain patterns, function names, param keys, OAuth placeholders) differ per app:
 
 - Top-level: `platform_version`, `product_parent`, `product_config` only.
-- Under `product_config.<product>` (key must match `product_parent`): `frontend_locations`, `whitelisted_domains`, `event_listener_functions`, `backend_api_functions`, `installation_parameters`, `app_oauth_config` — **no other top-level copies** of these keys.
+- Under `product_config.<product>` (key must match `product_parent`): `frontend_locations`, `whitelisted_domains`, `event_listener_functions`, `backend_api_functions`, `installation_parameters`, `oauth_config` — **no other top-level copies** of these keys.
 
 ---
 
@@ -19,7 +19,7 @@ Use this file as the **single source of truth** when generating or editing `mani
 - **MUST** use the key **`installation_parameters`** for installation-time params. Each param object has `display_name`, `description`, `type` (see **installation parameter types** below), `required`; optional: `data-bind`, `secure`, `default_value`.
 - **MUST** ensure every key in `backend_api_functions` and every `handler` in `event_listener_functions` is the **exact name** of a function **exported** from `app-backend/server.js`. Do not add manifest entries for functions that are not exported.
 - **MUST** declare **`onScheduledEvent`** under **`event_listener_functions`** when the app uses **scheduled triggers**: the platform fires this event on **each** schedule run, and the **`handler`** you set (typically the same exported function name, e.g. `onScheduledEvent`) is invoked like other event listeners.
-- **MUST NOT** put `frontend_locations`, `backend_api_functions`, `event_listener_functions`, `installation_parameters`, `app_oauth_config`, or `whitelisted_domains` at the top level; they belong only under `product_config.<product>`.
+- **MUST NOT** put `frontend_locations`, `backend_api_functions`, `event_listener_functions`, `installation_parameters`, `oauth_config`, or `whitelisted_domains` at the top level; they belong only under `product_config.<product>`.
 - When in doubt, follow the **Full example (structure)** and **Quick reference** below; then validate against the **Rules** section.
 
 ---
@@ -40,7 +40,7 @@ API-invokable functions must be declared in **`product_config.<product>.backend_
 
 ### 4. OAuth
 
-Apps using OAuth must declare **`product_config.<product>.app_oauth_config`** with provider name(s). Each provider **must** have `client_id`, `client_secret`, `authorize_url`, `token_url`, and an `options` object (its fields are provider-specific; use `{}` if none apply).
+Apps using OAuth must declare **`product_config.<product>.oauth_config`** with a provider name. The provider **must** have `client_id`, `client_secret` and `authorize_url`; `token_url` and `options` are optional. The platform uses only the **first** provider in `oauth_config`.
 
 ### 5. Consistency
 
@@ -56,7 +56,7 @@ The manifest must reflect the actual handlers exported from `app-backend/server.
 |-----|------|-------------|
 | `platform_version` | string | Platform version (e.g. `"2.0"`). |
 | `product_parent` | string | Product parent identifier (e.g. `"surveysparrow"`). |
-| `product_config` | object | Product-specific config. Key(s) = product identifier(s) (e.g. `surveysparrow`). Value = object with `frontend_locations`, `whitelisted_domains`, `event_listener_functions`, `backend_api_functions`, `installation_parameters`, `app_oauth_config`. See below. |
+| `product_config` | object | Product-specific config. Key(s) = product identifier(s) (e.g. `surveysparrow`). Value = object with `frontend_locations`, `whitelisted_domains`, `event_listener_functions`, `backend_api_functions`, `installation_parameters`, `oauth_config`. See below. |
 
 ### product_config.<product> (e.g. product_config.surveysparrow)
 
@@ -69,7 +69,7 @@ All app-specific manifest content lives under one product key (matching `product
 | `event_listener_functions` | object | Platform events → handler function names. See below. |
 | `backend_api_functions` | object | Backend API function names → options (e.g. `timeout`). See below. |
 | `installation_parameters` | object | Params collected at install. Each value’s `type` must be one of the allowed installation parameter types (listed under **installation_parameters** below). |
-| `app_oauth_config` | object | OAuth provider configs. See below. |
+| `oauth_config` | object | OAuth provider configs. See below. |
 
 ### Full example (structure)
 
@@ -124,7 +124,7 @@ All app-specific manifest content lives under one product key (matching `product
           "default_value": "https://api.surveysparrow.com"
         }
       },
-      "app_oauth_config": {
+      "oauth_config": {
         "googleCalendar": {
           "client_id": "...",
           "client_secret": "...",
@@ -231,12 +231,12 @@ Nested under **`product_config.<product>.installation_parameters`**. In code and
 
 `text`, `paragraph`, `dropdown`, `email`, `number`, `phone_number`, `date`, `url`, `radio`, `checkbox`, `multiselect`, `domain`, `api_key`
 
-### app_oauth_config
+### oauth_config
 
-Nested under **`product_config.<product>.app_oauth_config`**.
+Nested under **`product_config.<product>.oauth_config`**.
 
 ```json
-"app_oauth_config": {
+"oauth_config": {
   "googleCalendar": {
     "client_id": "...",
     "client_secret": "...",
@@ -252,9 +252,10 @@ Nested under **`product_config.<product>.app_oauth_config`**.
 }
 ```
 
-- **Keys:** OAuth provider names.
-- **Value:** Object. **Required fields:** `client_id` (string), `client_secret` (string), `authorize_url` (string), `token_url` (string), `options` (object).
-- **`options`:** Required, but every field inside it is optional and provider-specific: `response_type` (string), `access_type` (string), `prompt` (string), **`scope`** (array of strings). Use `"options": {}` if the provider needs none.
+- **Keys:** OAuth provider name. The platform uses only the **first** provider, so declare one.
+- **Value:** Object. **Required fields:** `client_id` (string), `client_secret` (string), `authorize_url` (string). **Optional:** `token_url` (string), `token_type` (string), `options` (object).
+- **`options`:** Optional. Its fields are provider-specific and all optional: `response_type` (string), `access_type` (string), `prompt` (string), **`scope`** (array of strings).
+- Use the key **`oauth_config`**. The platform does not read `app_oauth_config`, and it does not store `authorization_url` (use `authorize_url`).
 
 ---
 
@@ -270,4 +271,4 @@ Nested under **`product_config.<product>.app_oauth_config`**.
 | Under product | `event_listener_functions` | object | `{ "<eventName>": { handler: "<exportedFnName>" } }` — include **`onScheduledEvent`** → handler for each schedule trigger |
 | Under product | `backend_api_functions` | object | `{ "<fnName>": { timeout?: number } }` |
 | Under product | `installation_parameters` | object | `{ "<paramKey>": { data-bind?, display_name, description, type, required, secure?, default_value? } }` — `type` must be one of: `text`, `paragraph`, `dropdown`, `email`, `number`, `phone_number`, `date`, `url`, `radio`, `checkbox`, `multiselect`, `domain`, `api_key` |
-| Under product | `app_oauth_config` | object | `{ "<provider>": { client_id, client_secret, authorize_url, token_url, options: { response_type?, access_type?, prompt?, scope? } } }` |
+| Under product | `oauth_config` | object | `{ "<provider>": { client_id, client_secret, authorize_url, token_url?, token_type?, options?: { response_type?, access_type?, prompt?, scope? } } }` — only the first provider is used |
