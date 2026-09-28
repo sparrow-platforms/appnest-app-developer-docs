@@ -68,7 +68,7 @@ Structured follow-up questions to go from an app idea to a complete, buildable P
 | # | Question | Notes |
 |---|----------|--------|
 | P1 | Does the app need **installation-time** config? (API keys, URLs, tenant IDs, etc.) | installation_parameters. |
-| P2 | Does the app need **OAuth** to access a third-party service? Which provider? | app_oauth_config + whitelisted_domains. |
+| P2 | Does the app need **OAuth** to access a third-party service? Which provider? | oauth_config + whitelisted_domains. |
 | P3 | Are there **scopes or permissions** the app needs from the parent product or external API? List them. | Scopes, API permissions. |
 | P4 | Who can **see** or **change** app data? (e.g. same as parent product, per-workspace) | Access model. |
 

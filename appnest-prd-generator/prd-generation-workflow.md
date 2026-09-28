@@ -60,7 +60,7 @@ Step-by-step execution to turn an app idea and question answers into a complete,
      - `backend_api_functions` ← `{{api_fn_N_name}}`, `{{api_fn_N_purpose}}`, `{{api_fn_N_payload}}`, `{{api_fn_N_return}}`, `{{api_fn_N_timeout}}`
      - `event_listener_functions` ← `{{event_N_name}}`, `{{event_N_handler}}`, `{{event_N_payload}}`, `{{event_N_notes}}`
      - `installation_parameters` ← `{{iparam_N_key}}`, `{{iparam_N_display_name}}`, `{{iparam_N_type}}`, `{{iparam_N_required}}`, `{{iparam_N_secure}}`, `{{iparam_N_description}}`
-     - `app_oauth_config` ← `{{oauth_provider_key}}`, `{{oauth_provider_purpose}}`, `{{oauth_provider_options}}`
+     - `oauth_config` ← `{{oauth_provider_key}}`, `{{oauth_provider_purpose}}`, `{{oauth_provider_options}}`
      - `whitelisted_domains` ← `{{whitelisted_domains}}`
      - `$schedule` jobs ← `{{schedule_job_N_name}}`, `{{schedule_job_N_type}}`, `{{schedule_job_N_target_fn}}`, `{{schedule_job_N_schedule}}`, `{{schedule_job_N_notes}}`; `$next` chaining ← `{{next_caller_N}}`, `{{next_target_N}}`, `{{next_delay_N}}`, `{{next_notes_N}}`
    - **09-non-functional-requirements:** `{{event_handler_latency}}`, `{{api_response_time}}`, `{{volume_expectation}}`, `{{retry_policy}}`, `{{partial_failure_handling}}`, `{{idempotency_approach}}`, `{{error_handling_approach}}`, `{{rate_limit_approach}}`, `{{secrets_handling}}`, `{{pii_compliance}}`, `{{long_running_approach}}`
@@ -108,7 +108,7 @@ Step-by-step execution to turn an app idea and question answers into a complete,
 2. **Appnest Functions usage:** Confirm all external HTTP use `$fetch.request`; all persistent state use $db; long-running/chained work use $schedule or $next; no axios/fetch; handlers return ResultData or plain object; no `@sparrowengg/appnest-app-sdk-utils` in backend package.json. If the app uses $file, $schedule, or $next, confirm the corresponding PRD section (07 file storage, 08 scheduled jobs, 08 function chaining) is filled.
 3. **Manifest:** Confirm every invokable backend function is in backend_api_functions; every event handler in event_listener_functions; OAuth and installation_parameters match schema; whitelisted_domains cover all external hosts.
 4. **Frontend:** Confirm no react/react-dom in frontend package.json; UI uses Twigs (twigs-react, twigs-react-icons) where applicable. If the app has a full-page UI, confirm 11-ui-screens.md is filled and each screen's actions reference functionNames from backend_api_functions.
-5. **External APIs:** Confirm idempotency and retries are specified where the app pushes data; secrets only via installation_parameters or app_oauth_config; 429/retry and error handling mentioned.
+5. **External APIs:** Confirm idempotency and retries are specified where the app pushes data; secrets only via installation_parameters or oauth_config; 429/retry and error handling mentioned.
 
 **Exit condition:** If any alignment item fails → document the gap and output **CLARIFICATION REQUIRED**. If all pass → proceed to Step 5.
 

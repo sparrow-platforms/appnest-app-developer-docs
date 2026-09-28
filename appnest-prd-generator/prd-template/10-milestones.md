@@ -7,7 +7,7 @@
 **Deliverables:**
 
 - Backend: `app-backend/server.js` exporting all functions listed in 08-api-contracts; handlers implemented using **Appnest Functions** only; do not add `@sparrowengg/appnest-app-sdk-utils` to `app-backend/package.json`.
-- Manifest: `backend_api_functions`, `event_listener_functions`, `installation_parameters`, `app_oauth_config` (if any), `whitelisted_domains` complete and consistent with server.js.
+- Manifest: `backend_api_functions`, `event_listener_functions`, `installation_parameters`, `oauth_config` (if any), `whitelisted_domains` complete and consistent with server.js.
 - Frontend (if applicable): `app-frontend/src/App.jsx` and components using Twigs (`@sparrowengg/twigs-react`, `@sparrowengg/twigs-react-icons`); backend invoked via `window.AppnestFunctions.$app.backend`.
 - Data: All persistent state in $db with keys and types documented in 07-data-model.
 - Validation: All items in `appnest-prd-generator/validation-checklist.md` passed → **READY TO BUILD APP**.

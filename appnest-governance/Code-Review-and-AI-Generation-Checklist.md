@@ -16,7 +16,7 @@ Normative standards for calling external services from backend handlers.
 2. **Error handling** — Non-200 responses must be handled explicitly.
 3. **Rate limiting** — 429 responses must be retried with backoff.
 4. **Retry safety** — Retries must not cause duplicate resource creation.
-5. **Secrets** — Credentials must use **installation_parameters** (e.g. an `api_key` param with `secure: true`) or **app_oauth_config**. Hardcoding secrets is prohibited.
+5. **Secrets** — Credentials must use **installation_parameters** (e.g. an `api_key` param with `secure: true`) or **oauth_config**. Hardcoding secrets is prohibited.
 
 ### Verify
 
@@ -24,7 +24,7 @@ Normative standards for calling external services from backend handlers.
 - [ ] Non-200 responses handled explicitly  
 - [ ] 429 / rate limits handled (backoff where appropriate)  
 - [ ] Retries are safe (no duplicate side effects)  
-- [ ] No hardcoded secrets — only **installation_parameters** or **app_oauth_config**  
+- [ ] No hardcoded secrets — only **installation_parameters** or **oauth_config**  
 
 ---
 
@@ -48,7 +48,7 @@ Normative standards for calling external services from backend handlers.
 ## Manifest
 
 - [ ] **event_listener_functions** and **backend_api_functions** match exports from app-backend/server.js  
-- [ ] **app_oauth_config** declared if OAuth is used  
+- [ ] **oauth_config** declared if OAuth is used  
 - [ ] **frontend_locations** (e.g. full_page_app.url) set correctly  
 
 ---
