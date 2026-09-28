@@ -54,7 +54,7 @@ You do **not** edit `appnest-*` engine packages in normal app work—only your *
 
 1. **Implement functions** in any files you like (e.g. `sampleHandler.js`, `eventHandler.js`).  
 2. **Export them from `app-backend/server.js`**. Those exports are what the framework uses as **API endpoints** and **event handlers**. Any other backend code must be required by `server.js` and re-exported if it should be callable.  
-3. **Use Appnest-provided utilities** for all external I/O (database, other APIs)—see **[Backend-Appnest-Functions.md](appnest-functions/Backend-Appnest-Functions.md)**.  
+3. **Use Appnest-provided utilities** for all external I/O (database, other APIs)—see **[backend/BackendAppnestFunctions.md](appnest-functions/backend/BackendAppnestFunctions.md)**.  
 
 **Only functions exported from `app-backend/server.js` are invoked**; no other backend file is used as an entry.
 
@@ -246,4 +246,4 @@ appnest-development-engine app pack       # build + zip for distribution
 - **Recommended reading order:** [Documentation-Order.md](Documentation-Order.md)  
 - **Full document index:** [README.md](README.md)  
 - **Tools hub (repo root):** [AppnestTools.md](../AppnestTools.md)  
-- **Deep reference:** [Manifest-Rules.md](app-configuration/Manifest-Rules.md), [Backend-Appnest-Functions.md](appnest-functions/Backend-Appnest-Functions.md), [App-Frontend-Rules.md](App-Frontend-Rules.md), [Twigs-UI-Reference.md](Twigs-UI-Reference.md)  
+- **Deep reference:** [Manifest-Rules.md](app-configuration/Manifest-Rules.md), [backend/BackendAppnestFunctions.md](appnest-functions/backend/BackendAppnestFunctions.md), [App-Frontend-Rules.md](App-Frontend-Rules.md), [Twigs-UI-Reference.md](Twigs-UI-Reference.md)  

@@ -2,7 +2,7 @@
 
 ## AppNest storage
 
-All persistent state must use the AppNest **$db** API. Types: `string`, `number`, `list`, `map`, `boolean`. Do not use in-memory state for cross-invocation data. See `appnest-governance/appnest-functions/Backend-Appnest-Functions.md`.
+All persistent state must use the AppNest **$db** API. Types: `string`, `number`, `list`, `map`, `boolean`. Do not use in-memory state for cross-invocation data. See `appnest-governance/appnest-functions/backend/BackendAppnestFunctions.md`.
 
 ---
 
@@ -30,7 +30,7 @@ All persistent state must use the AppNest **$db** API. Types: `string`, `number`
 
 ## File storage ($file)
 
-If the app uses the AppNest **$file** API (getUploadUrl, getDownloadUrl, delete, list, exists), document paths and which handlers use them. See `appnest-governance/appnest-functions/Backend-Appnest-Functions.md`.
+If the app uses the AppNest **$file** API (getUploadUrl, getDownloadUrl, delete, list, exists), document paths and which handlers use them. See `appnest-governance/appnest-functions/backend/BackendAppnestFunctions.md`.
 
 | Path or pattern | Visibility | Operations used | Handler(s) | Notes |
 |-----------------|------------|------------------|------------|--------|

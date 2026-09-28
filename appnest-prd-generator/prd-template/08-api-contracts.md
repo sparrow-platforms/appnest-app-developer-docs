@@ -75,7 +75,7 @@ List every platform event the app subscribes to. Each `handler` must be a functi
 
 ## Scheduled jobs ($schedule)
 
-If the app uses the AppNest **$schedule** API (create, get, update, pause, resume, delete), list each job. The **target function** must be exported from `app-backend/server.js`. See `appnest-governance/appnest-functions/Backend-Appnest-Functions.md`.
+If the app uses the AppNest **$schedule** API (create, get, update, pause, resume, delete), list each job. The **target function** must be exported from `app-backend/server.js`. See `appnest-governance/appnest-functions/backend/BackendAppnestFunctions.md`.
 
 | Job name | Type | Target function | Schedule (runAt / cronExpression / repeat) | Notes |
 |----------|------|------------------|--------------------------------------------|--------|

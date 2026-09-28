@@ -4,7 +4,7 @@ This document is the **single source of truth** for the Appnest custom SDK funct
 
 **For AI code generation:** (1) This file is self-contained; all function signatures, parameters, return shapes, and constraints are below. (2) **Import pattern:** The package exports `AppnestFunctions` and `ResultData` only. Always use: `const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils'); const { $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;` (destructure only the modules you need). Do not use `const { $db } = require('@sparrowengg/appnest-app-sdk-utils')` — that is incorrect.
 
-**Do not add `@sparrowengg/appnest-app-sdk-utils` (or `appnest-app-sdk-utils`) to `app-backend/package.json`.** The SDK is provided by the AppNest platform at runtime. Your backend code should `require('@sparrowengg/appnest-app-sdk-utils')` (or the package name configured by the platform) without listing it as a dependency.
+**Do not add `@sparrowengg/appnest-app-sdk-utils` (or `@sparrowengg/appnest-app-sdk-utils`) to `app-backend/package.json`.** The SDK is provided by the AppNest platform at runtime. Your backend code should `require('@sparrowengg/appnest-app-sdk-utils')` (or the package name configured by the platform) without listing it as a dependency.
 
 ---
 
@@ -12,8 +12,6 @@ This document is the **single source of truth** for the Appnest custom SDK funct
 
 ```javascript
 const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
-// or from path:
-// const { AppnestFunctions } = require('<path-to-sdk>/appnestFunctions');
 
 const { $db, $file, $fetch, $next, $schedule, getTraceId } = AppnestFunctions;
 ```

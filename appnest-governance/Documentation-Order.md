@@ -13,7 +13,7 @@ Folders and files under `appnest-governance/` are **not** numbered. Use this lis
 ## 3. appnest-functions (SDK)
 
 3. [appnest-functions/Appnest-Functions.md](appnest-functions/Appnest-Functions.md) — backend vs frontend overview.  
-4. [appnest-functions/Backend-Appnest-Functions.md](appnest-functions/Backend-Appnest-Functions.md) — `$db`, `$fetch`, `$file`, `$next`, `$schedule`, `getTraceId`, `ResultData`.  
+4. [appnest-functions/backend/BackendAppnestFunctions.md](appnest-functions/backend/BackendAppnestFunctions.md) — `$db`, `$fetch`, `$file`, `$next`, `$schedule`, `getTraceId`, `ResultData`.  
 5. [appnest-functions/Frontend-Appnest-Functions.md](appnest-functions/Frontend-Appnest-Functions.md) — `client.js`, `window.AppnestFunctions`.
 
 ## 4. app-configuration

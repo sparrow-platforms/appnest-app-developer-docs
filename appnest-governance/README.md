@@ -21,7 +21,7 @@ Standards and reference for Appnest apps: **execution flows**, **appnest-functio
 | | [Appnest-Development-Engine-Commands.md](appnest-development-engine/Appnest-Development-Engine-Commands.md) | `app init`, `start`, `validate`, `pack`, and related commands |
 | **Execution and flows** | [Appnest-Execution-Flows.md](Appnest-Execution-Flows.md) | Trigger → handler → SDK → `ResultData`, principles, operation types, long-running flows |
 | **appnest-functions** | [Appnest-Functions.md](appnest-functions/Appnest-Functions.md) | Overview: backend/frontend AppnestFunctions; links to detailed references |
-| | [Backend-Appnest-Functions.md](appnest-functions/Backend-Appnest-Functions.md) | Full SDK reference (import, $db, $fetch, $file, $next, $schedule, getTraceId) |
+| | [backend/BackendAppnestFunctions.md](appnest-functions/backend/BackendAppnestFunctions.md) | Full SDK reference (import, $db, $fetch, $file, $next, $schedule, getTraceId) |
 | | [Frontend-Appnest-Functions.md](appnest-functions/Frontend-Appnest-Functions.md) | Client bridge: `client.js`, `window.AppnestFunctions` ($check, $app) |
 | **app-configuration** | [Manifest-Rules.md](app-configuration/Manifest-Rules.md) | Manifest rules + full schema (code-generation) |
 | **Frontend (read before generating UI)** | [App-Frontend-Rules.md](App-Frontend-Rules.md) | **Enforced** frontend rules: entry, `$app.backend`, Twigs only, responsive, SaaS “wow”, structure, checklist. Pair with Twigs reference below. |

@@ -60,7 +60,7 @@ All apps must be designed for:
 - Retry safety  
 - Duplicate prevention  
 
-No app should assume ideal runtime conditions. For outbound HTTP (`$fetch`), errors, and secrets, see **[Code-Review-and-AI-Generation-Checklist.md](Code-Review-and-AI-Generation-Checklist.md#external-api)** (External API standards). For scheduling and chaining, see **[Backend-Appnest-Functions.md](appnest-functions/Backend-Appnest-Functions.md)** (`$schedule`, `$next`).
+No app should assume ideal runtime conditions. For outbound HTTP (`$fetch`), errors, and secrets, see **[Code-Review-and-AI-Generation-Checklist.md](Code-Review-and-AI-Generation-Checklist.md#external-api)** (External API standards). For scheduling and chaining, see **[backend/BackendAppnestFunctions.md](appnest-functions/backend/BackendAppnestFunctions.md)** (`$schedule`, `$next`).
 
 ---
 

@@ -7,7 +7,7 @@ Development CLI and runtime for Appnest apps. It wires your **app-backend**, **a
 ## Related docs
 
 - **[Appnest-Development-Engine-Commands.md](./Appnest-Development-Engine-Commands.md)** — Command reference (`app init`, `start`, `validate`, `pack`, …).
-- **[App-Developement.md](./App-Developement.md)** — What app developers build in their project (folders, rules).
+- **[Appnest-App-Development-Guide.md](../Appnest-App-Development-Guide.md)** — What app developers build in their project (folders, rules).
 
 ---
 
