@@ -24,7 +24,7 @@
 ## UI surface
 
 - **Full-page app:** {{has_full_page_app}} (if yes, UI is built in `app-frontend/src/App.jsx` and child components; use `@sparrowengg/twigs-react` and `@sparrowengg/twigs-react-icons` for components and icons.)
-- **Custom installation frontend:** {{custom_installation_frontend}} (if true, use `app-installation-frontend`.)
+- **Custom installation frontend:** {{custom_installation_frontend}} (if true, build it in `app-install-frontend/`.)
 
 ## Out of scope (v1)
 
