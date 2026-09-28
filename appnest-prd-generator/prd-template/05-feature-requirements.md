@@ -13,7 +13,7 @@
 
 {{configuration_items}}
 
-(These may map to `installation_params` in `manifest.json` and/or to app UI that persists config via backend API and $db.)
+(These may map to `installation_parameters` in `manifest.json` and/or to app UI that persists config via backend API and $db.)
 
 ## Platform events (if any)
 

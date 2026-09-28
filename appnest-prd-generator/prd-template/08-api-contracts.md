@@ -49,7 +49,7 @@ List every platform event the app subscribes to. Each `handler` must be a functi
 
 ---
 
-## Installation params (installation_params)
+## Installation params (installation_parameters)
 
 | Param key | display_name | type | required | secure | Description |
 |-----------|--------------|------|----------|--------|-------------|
