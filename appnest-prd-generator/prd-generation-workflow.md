@@ -47,17 +47,31 @@ Step-by-step execution to turn an app idea and question answers into a complete,
 **Actions:**
 
 1. Copy each file under [prd-template/](prd-template/) into the target PRD folder (e.g. `app-prd-ai-doc/`).
-2. Replace every placeholder with the corresponding answer:
-   - `{{product_name}}`, `{{elevator_pitch}}`, `{{scope_v1}}`, `{{success_criteria}}`
-   - `{{primary_persona}}`, `{{user_goal}}`, `{{pain_points}}`
-   - `{{core_features}}`, `{{configuration_items}}`, `{{platform_events}}`
-   - `{{core_entities}}`, `{{storage_keys}}`, `{{db_types}}`
-   - `{{backend_api_functions}}`, `{{event_listener_functions}}`, `{{installation_parameters}}`, `{{app_oauth_config}}`, `{{whitelisted_domains}}`
+2. Replace every `{{placeholder}}` in each copied file with the corresponding answer. The template files are the source of truth for placeholder names; `N` / `M` below stand for the numbered copies in the templates (`_1`, `_2`, …) — add or remove rows and sections so there is one per item the app actually has.
+   - **All files:** `{{product_name}}`
+   - **01-overview:** `{{elevator_pitch}}`, `{{scope_v1}}`, `{{in_scope}}`, `{{out_of_scope}}`, `{{success_criteria}}`
+   - **02-problem-statement:** `{{problem_description}}`, `{{users_affected}}`, `{{current_gap}}`, `{{why_now}}`, `{{desired_outcome}}`
+   - **03-user-personas:** `{{primary_persona_role}}`, `{{primary_persona_goal}}`, `{{primary_persona_pain_points}}`, `{{primary_persona_context}}`, `{{secondary_personas}}`, `{{v1_target_persona}}`
+   - **04-user-flows:** `{{flow_N_name}}`, `{{flow_N_trigger}}`, `{{flow_N_actor}}`, `{{flow_N_screens}}`, `{{flow_N_step_M}}`, `{{flow_N_outcome}}`, `{{additional_flows}}`
+   - **05-feature-requirements:** `{{feature_N_name}}`, `{{feature_N_description}}`, `{{feature_N_acceptance_criteria}}`, `{{configuration_items}}`, `{{platform_events}}`, `{{has_full_page_app}}`, `{{custom_installation_frontend}}`, `{{out_of_scope_features}}`
+   - **06-technical-architecture:** `{{architecture_diagram_or_description}}`, `{{external_dependencies}}`
+   - **07-data-model:** `{{core_entities}}`, `{{entity_N_name}}`, `{{entity_N_purpose}}`, `{{entity_N_key_pattern}}`, `{{entity_N_db_type}}`, `{{entity_N_notes}}`, `{{storage_keys}}`, `{{pii_handling}}`, `{{file_path_N}}`, `{{file_visibility_N}}`, `{{file_ops_N}}`, `{{file_handlers_N}}`, `{{file_notes_N}}`, `{{external_system_data}}`
+   - **08-api-contracts** (these become the manifest):
+     - `backend_api_functions` ← `{{api_fn_N_name}}`, `{{api_fn_N_purpose}}`, `{{api_fn_N_payload}}`, `{{api_fn_N_return}}`, `{{api_fn_N_timeout}}`
+     - `event_listener_functions` ← `{{event_N_name}}`, `{{event_N_handler}}`, `{{event_N_payload}}`, `{{event_N_notes}}`
+     - `installation_parameters` ← `{{iparam_N_key}}`, `{{iparam_N_display_name}}`, `{{iparam_N_type}}`, `{{iparam_N_required}}`, `{{iparam_N_secure}}`, `{{iparam_N_description}}`
+     - `app_oauth_config` ← `{{oauth_provider_key}}`, `{{oauth_provider_purpose}}`, `{{oauth_provider_options}}`
+     - `whitelisted_domains` ← `{{whitelisted_domains}}`
+     - `$schedule` jobs ← `{{schedule_job_N_name}}`, `{{schedule_job_N_type}}`, `{{schedule_job_N_target_fn}}`, `{{schedule_job_N_schedule}}`, `{{schedule_job_N_notes}}`; `$next` chaining ← `{{next_caller_N}}`, `{{next_target_N}}`, `{{next_delay_N}}`, `{{next_notes_N}}`
+   - **09-non-functional-requirements:** `{{event_handler_latency}}`, `{{api_response_time}}`, `{{volume_expectation}}`, `{{retry_policy}}`, `{{partial_failure_handling}}`, `{{idempotency_approach}}`, `{{error_handling_approach}}`, `{{rate_limit_approach}}`, `{{secrets_handling}}`, `{{pii_compliance}}`, `{{long_running_approach}}`
+   - **10-milestones:** `{{mvp_scope}}`, `{{milestone_N_name}}`, `{{milestone_N_deps}}`, `{{milestone_N_done_when}}`, `{{phase_2_milestones}}`, `{{dependencies_and_risks}}`
+   - **11-ui-screens:** `{{screen_N_name}}`, `{{screen_N_purpose}}`, `{{screen_N_entry}}`, `{{screen_N_layout}}`, `{{screen_N_elements}}`, `{{screen_N_actions}}`, `{{screen_N_data}}`, `{{screen_N_states}}`, `{{additional_screens}}`
+   - Sections that don't apply (e.g. OAuth, $file, $schedule, $next, UI screens for a backend-only app): write **N/A** rather than leaving placeholders.
    - If the app uses **$file**: fill file storage section in 07-data-model (paths, visibility, operations, handlers).
    - If the app uses **$schedule**: fill scheduled jobs table in 08-api-contracts (name, type, target function, schedule).
    - If the app uses **$next**: fill function chaining table in 08-api-contracts (caller, target function, functionPayload, delay).
    - If the app has a **full-page UI**: fill **11-ui-screens.md** (screens overview, and for each screen: purpose, entry, layout using Stack/Box, **exact Twigs component names** for every control and block—Button, Select, Input, Alert, Table, Spinner, Text, etc.—and actions with functionName, data shown, empty/loading/error using Twigs). State that implementation **MUST** use only Twigs for that screen (no raw HTML). Optionally set **Screen(s)** in 04-user-flows. Before marking READY TO BUILD, ensure 11-ui-screens and the checklist require Twigs-only UI and layout.
-   - `{{mvp_scope}}`, `{{milestones}}`
+   - When done, search the PRD folder for `{{`: no placeholder may remain.
 3. In `06-technical-architecture.md`, ensure:
    - Backend entry is **`app-backend/server.js`** and only exported functions are invokable.
    - Frontend entry is **`app-frontend/src/App.jsx`**; backend is called via **`window.AppnestFunctions.$app.backend({ functionName, functionPayload })`**.
