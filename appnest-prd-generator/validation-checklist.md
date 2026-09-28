@@ -22,8 +22,8 @@ Use this checklist after filling the PRD template and before marking the app **R
 | 2.2 | Every backend API function is declared in **manifest.json** → **backend_api_functions** with correct function name and timeout. | Yes | ☐ Pass ☐ Fail ☐ Unclear | Must match exports from server.js. |
 | 2.3 | Every platform event the app uses is **named** and has a **handler** function name. | Yes | ☐ Pass ☐ Unclear ☐ N/A | 08-api-contracts. |
 | 2.4 | Every event handler is declared in **manifest.json** → **event_listener_functions** and exported from **app-backend/server.js**. | Yes | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | No mismatch. |
-| 2.5 | **installation_params** (if any) are listed with keys, types, required, secure. | Yes | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | 08-api-contracts + manifest schema. |
-| 2.6 | **oauth_config** (if OAuth is used) is defined with provider, client_id, client_secret, authorize_url, token_url, options. | Yes | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | 08-api-contracts + manifest. |
+| 2.5 | **installation_parameters** (if any) are listed with keys, display_name, description, type, required (and secure where needed). | Yes | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | 08-api-contracts + manifest schema. |
+| 2.6 | **app_oauth_config** (if OAuth is used) is defined with provider, client_id, client_secret, authorize_url, token_url, options. | Yes | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | 08-api-contracts + manifest. |
 | 2.7 | **whitelisted_domains** include all external API and OAuth domains the app calls. | Yes | ☐ Pass ☐ Fail ☐ Unclear | 08-api-contracts. |
 
 ---
@@ -34,7 +34,7 @@ Use this checklist after filling the PRD template and before marking the app **R
 |---|--------|----------|-------------------|--------|
 | 3.1 | Core **entities** are listed with purpose and key pattern. | Yes | ☐ Pass ☐ Fail ☐ Unclear | 07-data-model. |
 | 3.2 | Every persistent entity has a **storage strategy** (e.g. $db key pattern and type: string, number, list, map, boolean). | Yes | ☐ Pass ☐ Fail ☐ Unclear | 07-data-model; no in-memory cross-invocation state. |
-| 3.3 | **Sensitive data** and **secrets** are handled only via installation_params or oauth_config; no hardcoding. | Yes | ☐ Pass ☐ Fail ☐ Unclear | 07-data-model + 09-non-functional. |
+| 3.3 | **Sensitive data** and **secrets** are handled only via installation_parameters or app_oauth_config; no hardcoding. | Yes | ☐ Pass ☐ Fail ☐ Unclear | 07-data-model + 09-non-functional. |
 | 3.4 | If the app uses **$file**: file storage section in 07-data-model is filled (paths, visibility, operations, handlers). | If uses $file | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | 07-data-model. |
 | 3.5 | If the app uses **$schedule**: scheduled jobs are listed in 08-api-contracts with name, type, target function, schedule. | If uses $schedule | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | 08-api-contracts. |
 | 3.6 | If the app uses **$next**: function chaining is documented in 08-api-contracts (caller, target function, functionPayload, delay). | If uses $next | ☐ Pass ☐ Fail ☐ Unclear ☐ N/A | 08-api-contracts. |

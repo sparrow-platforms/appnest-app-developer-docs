@@ -37,7 +37,7 @@ Structured follow-up questions to go from an app idea to a complete, buildable P
 | F1 | What are the **3–5 core features** for v1? (one line each) | MVP feature list. |
 | F2 | For each core feature: what does the user **do** (action) and what do they **see** (outcome)? | Actions + outcomes. |
 | F3 | Does the app need a **UI** (full-page app), or only **backend** (events/API)? Or both? | Drives frontend_locations + backend_api_functions. |
-| F4 | Are there **configurable settings** (e.g. mappings, filters, toggles) the user must set? List them. | Configuration / installation_params. |
+| F4 | Are there **configurable settings** (e.g. mappings, filters, toggles) the user must set? List them. | Configuration / installation_parameters. |
 | F5 | Does the app react to **platform events** (e.g. submission complete, contact created)? Which ones? | event_listener_functions. |
 | F6 | If the app has a **full-page UI**: how many **main screens/views** are there? List each screen **name** and **one-line purpose**. | 11-ui-screens overview; screens should align with user flows. |
 | F7 | For each screen: **how does the user reach it**? **Layout/sections** (use Stack, Box)? **Exact Twigs components** per element (Button, Select, Input, Alert, Table, Spinner, Text—no raw HTML). **User actions** and which **backend functionName** each calls? **Data shown** (source)? **Empty/loading/error** using Twigs (Text, Spinner, Alert)? Implementation must use **only** Twigs for that screen. | 11-ui-screens per-screen spec; tie actions to 08-api-contracts; see `appnest-governance/App-Frontend-Rules.md` and `appnest-governance/Twigs-UI-Reference.md`. |
@@ -54,7 +54,7 @@ Structured follow-up questions to go from an app idea to a complete, buildable P
 | D2 | For each entity: what **fields** are required? What is the **natural key** (e.g. surveyId + mappingId)? | Fields + keys. |
 | D3 | Where is data **stored**? (Only AppNest $db, or also external system?) | $db usage + external systems. |
 | D4 | What **$db types** will you use per key pattern? (e.g. string for JSON blob, map for key-value, list for arrays) | Align with **Appnest Functions** / `$db`: string, number, list, map, boolean. |
-| D5 | Is there any **sensitive data**? How is it handled? (installation_params, oauth, no hardcoding) | Secrets in manifest only. |
+| D5 | Is there any **sensitive data**? How is it handled? (installation_parameters, oauth, no hardcoding) | Secrets in manifest only. |
 | D6 | Does the app **upload, download, list, or delete files**? If yes: what **paths** or path patterns? **Visibility** (PUBLIC vs PRIVATE)? Which handlers use $file (getUploadUrl, getDownloadUrl, delete, list, exists)? | File storage ($file); 07-data-model file section. |
 | D7 | Does the app need **scheduled jobs** (cron, one-time, recurring)? For each: **name**, **type** (ONE_TIME / CRON / RECURRING), **target function** (export name from server.js), **schedule** (e.g. cron expression, runAt, or repeat)? | Scheduled jobs ($schedule); 08 or 06. |
 | D8 | Does any handler **invoke another function** via $next? If yes: **caller function**, **target function name**, **functionPayload shape**, **delay** (seconds)? | Function chaining ($next); 08-api-contracts. |
@@ -67,8 +67,8 @@ Structured follow-up questions to go from an app idea to a complete, buildable P
 
 | # | Question | Notes |
 |---|----------|--------|
-| P1 | Does the app need **installation-time** config? (API keys, URLs, tenant IDs, etc.) | installation_params. |
-| P2 | Does the app need **OAuth** to access a third-party service? Which provider? | oauth_config + whitelisted_domains. |
+| P1 | Does the app need **installation-time** config? (API keys, URLs, tenant IDs, etc.) | installation_parameters. |
+| P2 | Does the app need **OAuth** to access a third-party service? Which provider? | app_oauth_config + whitelisted_domains. |
 | P3 | Are there **scopes or permissions** the app needs from the parent product or external API? List them. | Scopes, API permissions. |
 | P4 | Who can **see** or **change** app data? (e.g. same as parent product, per-workspace) | Access model. |
 
@@ -96,7 +96,7 @@ Structured follow-up questions to go from an app idea to a complete, buildable P
 | N1 | **Latency** expectations? (e.g. event handler &lt; 30s, API &lt; 10s) | Timeouts in manifest. |
 | N2 | **Volume** expectations? (e.g. events/day, API calls/day) | Scale. |
 | N3 | **Availability** / reliability needs? (e.g. retries, alerts on repeated failure) | Error handling, alerts. |
-| N4 | Any **compliance** or **security** constraints? (e.g. no PII in logs, secrets only in installation_params) | Security, governance. |
+| N4 | Any **compliance** or **security** constraints? (e.g. no PII in logs, secrets only in installation_parameters) | Security, governance. |
 
 **When to ask deeper:** If volume is “high,” ask: whether long-running work is split with $next or $schedule and how timeouts are set.
 

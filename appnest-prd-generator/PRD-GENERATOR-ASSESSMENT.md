@@ -13,7 +13,7 @@ This document summarizes how well the PRD generator covers Appnest apps and what
 | **Data / $db** | Question framework D1–D4 (entities, fields, where stored, $db types); 07-data-model has entities table with key pattern and $db type. |
 | **Entry points** | 06-technical-architecture and validation checklist enforce server.js + App.jsx, `$app.backend({ functionName, functionPayload })`. |
 | **Appnest Functions (principle)** | Workflow and 06 state that all I/O uses $db, $fetch, $file, $next, $schedule via **Appnest Functions**; no axios/fetch; do not add `@sparrowengg/appnest-app-sdk-utils` to backend `package.json`. |
-| **Manifest** | installation_params, oauth_config, whitelisted_domains covered in questions and 08-api-contracts. |
+| **Manifest** | installation_parameters, app_oauth_config, whitelisted_domains covered in questions and 08-api-contracts. |
 | **External APIs** | Integrations (I1–I4), idempotency/retries (6.1–6.3 in validation), 09-non-functional. |
 
 ---
@@ -66,6 +66,6 @@ This document summarizes how well the PRD generator covers Appnest apps and what
   - **$file:** When used: paths, visibility, operations (upload/download/list/delete), and which handlers use them.
   - **$schedule:** When used: each job’s name, type (ONE_TIME/CRON/RECURRING), target function, and schedule.
   - **$next:** When used: which function calls which, functionPayload shape, and delay.
-  - **Manifest:** backend_api_functions, event_listener_functions, installation_params, oauth_config, whitelisted_domains (already in place).
+  - **Manifest:** backend_api_functions, event_listener_functions, installation_parameters, app_oauth_config, whitelisted_domains (already in place).
 
 Running the question framework in order, filling all template sections (including the new ones), and passing the validation checklist (including the new items) should produce a PRD that is **ready to build** an Appnest app with full coverage of backend behaviour, data storage, and **Appnest Functions** usage ($db, $fetch, $file, $schedule, $next; `getTraceId` for correlation).

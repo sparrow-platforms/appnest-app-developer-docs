@@ -52,7 +52,7 @@ Step-by-step execution to turn an app idea and question answers into a complete,
    - `{{primary_persona}}`, `{{user_goal}}`, `{{pain_points}}`
    - `{{core_features}}`, `{{configuration_items}}`, `{{platform_events}}`
    - `{{core_entities}}`, `{{storage_keys}}`, `{{db_types}}`
-   - `{{backend_api_functions}}`, `{{event_listener_functions}}`, `{{installation_params}}`, `{{oauth_config}}`, `{{whitelisted_domains}}`
+   - `{{backend_api_functions}}`, `{{event_listener_functions}}`, `{{installation_parameters}}`, `{{app_oauth_config}}`, `{{whitelisted_domains}}`
    - If the app uses **$file**: fill file storage section in 07-data-model (paths, visibility, operations, handlers).
    - If the app uses **$schedule**: fill scheduled jobs table in 08-api-contracts (name, type, target function, schedule).
    - If the app uses **$next**: fill function chaining table in 08-api-contracts (caller, target function, functionPayload, delay).
@@ -92,9 +92,9 @@ Step-by-step execution to turn an app idea and question answers into a complete,
 
 1. **Entry points:** Confirm backend has only one entry (server.js exports); frontend has only one root (App.jsx); no custom routes/controllers.
 2. **Appnest Functions usage:** Confirm all external HTTP use `$fetch.request`; all persistent state use $db; long-running/chained work use $schedule or $next; no axios/fetch; handlers return ResultData or plain object; no `@sparrowengg/appnest-app-sdk-utils` in backend package.json. If the app uses $file, $schedule, or $next, confirm the corresponding PRD section (07 file storage, 08 scheduled jobs, 08 function chaining) is filled.
-3. **Manifest:** Confirm every invokable backend function is in backend_api_functions; every event handler in event_listener_functions; OAuth and installation_params match schema; whitelisted_domains cover all external hosts.
+3. **Manifest:** Confirm every invokable backend function is in backend_api_functions; every event handler in event_listener_functions; OAuth and installation_parameters match schema; whitelisted_domains cover all external hosts.
 4. **Frontend:** Confirm no react/react-dom in frontend package.json; UI uses Twigs (twigs-react, twigs-react-icons) where applicable. If the app has a full-page UI, confirm 11-ui-screens.md is filled and each screen's actions reference functionNames from backend_api_functions.
-5. **External APIs:** Confirm idempotency and retries are specified where the app pushes data; secrets only via installation_params or oauth_config; 429/retry and error handling mentioned.
+5. **External APIs:** Confirm idempotency and retries are specified where the app pushes data; secrets only via installation_parameters or app_oauth_config; 429/retry and error handling mentioned.
 
 **Exit condition:** If any alignment item fails → document the gap and output **CLARIFICATION REQUIRED**. If all pass → proceed to Step 5.
 

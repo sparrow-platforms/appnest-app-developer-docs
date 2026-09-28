@@ -25,7 +25,7 @@ All persistent state must use the AppNest **$db** API. Types: `string`, `number`
 
 ## Sensitive data
 
-- **Secrets:** Stored only via platform (installation_params, oauth). Never in $db as plain text unless encrypted by platform.
+- **Secrets:** Stored only via platform (installation_parameters, oauth). Never in $db as plain text unless encrypted by platform.
 - **PII:** {{pii_handling}}
 
 ## File storage ($file)

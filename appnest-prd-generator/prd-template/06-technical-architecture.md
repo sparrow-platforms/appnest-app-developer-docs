@@ -22,11 +22,13 @@ This app follows the AppNest framework. Reference: `appnest-governance/` (entry 
 
 ### Manifest
 
+All keys below live under `product_config.<product>` in `manifest.json` (e.g. `product_config.surveysparrow`), never at the top level. See `appnest-governance/app-configuration/Manifest-Rules.md`.
+
 - **backend_api_functions:** Every API-invokable function name must match an export from `server.js`; include `timeout` where needed.
 - **event_listener_functions:** Every platform event must map `handler` to a function name exported from `server.js`.
 - **whitelisted_domains:** Include all external API and OAuth domains (regex patterns).
-- **installation_params:** All installation-time config (API keys, URLs, etc.); use `product_api_key`, `text`, `secure` as per schema.
-- **oauth_config:** If the app uses OAuth, declare provider(s) with `client_id`, `client_secret`, `authorize_url`, `token_url`, `options` (e.g. scope).
+- **installation_parameters:** All installation-time config (API keys, URLs, etc.); each param needs `display_name`, `description`, `type` (e.g. `api_key`, `text`) and `required`; set `secure: true` for secrets and `data-bind: "product.api_key"` for the product API key.
+- **app_oauth_config:** If the app uses OAuth, declare provider(s) with `client_id`, `client_secret`, `authorize_url`, `token_url`, `options` (e.g. scope).
 
 ---
 
@@ -66,4 +68,4 @@ app-frontend/
 
 ## Security and secrets
 
-- No hardcoded secrets. Use **installation_params** (e.g. product_api_key, secure text) or **oauth_config** only. See `appnest-governance/Code-Review-and-AI-Generation-Checklist.md` (External API — secrets).
+- No hardcoded secrets. Use **installation_parameters** (e.g. an `api_key` param with `secure: true`) or **app_oauth_config** only. See `appnest-governance/Code-Review-and-AI-Generation-Checklist.md` (External API — secrets).
