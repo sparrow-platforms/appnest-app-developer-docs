@@ -49,12 +49,14 @@ The SDK builds the outbound `options` object as: any keys from `additionalOption
 
 **Rule — required for all API calls:** Any value that comes from app configuration (installation params / iparams) and is used in a `$fetch` request **must** be expressed using the replace syntax `<%=iparams.<param_key>%>` in **url**, **headers**, or **body**. Do not hardcode these values or read them at runtime; the AppNest framework replaces the placeholders at request time.
 
-When making an API call through `$fetch`, if the developer needs to use an iparam-specific key/value from their manifest, they must define it under **installation_params** in the manifest.
+When making an API call through `$fetch`, if the developer needs to use an iparam-specific key/value from their manifest, they must define it under **installation_parameters** in `manifest.json`, inside `product_config.<product>` (see `appnest-governance/app-configuration/Manifest-Rules.md`).
 
 ### Defining iparams in the manifest
 
+Under `product_config.<product>` (e.g. `product_config.surveysparrow`):
+
 ```json
-"installation_params": {
+"installation_parameters": {
   "surveysparrow_api_key": {
     "display_name": "SurveySparrow API Key",
     "description": "Please enter your SurveySparrow API key. You can find it in Settings → Apps & Integrations → Custom Apps.",
@@ -67,7 +69,7 @@ When making an API call through `$fetch`, if the developer needs to use an ipara
     "description": "Please enter your SurveySparrow API URL.",
     "required": true,
     "secure": true,
-    "type": "string"
+    "type": "url"
   }
 }
 ```
@@ -82,7 +84,7 @@ Reference iparams in the request **url**, **headers**, or **body** using the rep
 - **In headers or body:**  
   `<%=iparams.surveysparrow_api_key%>`
 
-The same replacement syntax (`<%=iparams.<param_key>%>`) can be used wherever dynamic values from iparams are required in the request configuration.
+The same replacement syntax (`<%=iparams.<param_key>%>`) can be used wherever dynamic values from iparams are required in the request configuration. `<%=installation_parameters.<param_key>%>` is an equivalent alias.
 
 ### For AI / code generation
 
