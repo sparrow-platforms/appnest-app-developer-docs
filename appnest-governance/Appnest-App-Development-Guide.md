@@ -225,7 +225,7 @@ your-app/
 - **Try/catch** — If you don't use the exception value, write a **parameterless** `catch { }` (or name it `exception`); an unused `catch (e)` is reported as a warning by **`validate`**. If you need the error, bind it and use it (log, rethrow, branch).  
 - **Run from the app root** — Run every `appnest-development-engine app …` command from your app project folder (the one containing `app-backend/`, `app-frontend/` and `manifest.json`); the engine treats the current folder as the app project.  
 - **`appnest-development-engine app validate`** — Run before commits or CI: backend + frontend lint + **`manifest.json`** checks.  
-- **`appnest-development-engine app pack`** — Zips the default folders (`app-frontend`, `app-backend`, `app-install-frontend`) and **`manifest.json`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`. Env files (`.env`, `.env.*`) are never packed. Run **`app bundle-frontend`** first; `pack` doesn't build the frontend.  
+- **`appnest-development-engine app pack`** — Zips the default folders (`app-frontend`, `app-backend`, `app-install-frontend`) and **`manifest.json`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`. Env files (`.env`, `.env.*`) are never packed. It builds the frontend first (same as **`app bundle-frontend`**) and stops if the build fails.  
 - **Secrets** — Treat **`.env`** as sensitive and don't commit or share it. `pack` leaves it out, so the platform never receives it.  
 
 ---
@@ -236,8 +236,7 @@ your-app/
 appnest-development-engine app init              # scaffold (empty folder rules apply)
 appnest-development-engine app start             # proxy + backend + frontends
 appnest-development-engine app validate          # lint + manifest
-appnest-development-engine app bundle-frontend   # build app-frontend/dist
-appnest-development-engine app pack              # zip for distribution (run bundle-frontend first)
+appnest-development-engine app pack              # build + zip for distribution
 ```
 
 ---
