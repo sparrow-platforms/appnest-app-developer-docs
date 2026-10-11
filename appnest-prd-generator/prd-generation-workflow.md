@@ -100,7 +100,7 @@ Step-by-step execution to turn an app idea and question answers into a complete,
 
 ## Step 4: Architecture alignment check
 
-**Input:** Filled PRD; governance docs: [Appnest-App-Development-Guide.md](../appnest-governance/Appnest-App-Development-Guide.md), [appnest-functions/Appnest-Functions.md](../appnest-governance/appnest-functions/Appnest-Functions.md), [appnest-functions/backend/BackendAppnestFunctions.md](../appnest-governance/appnest-functions/backend/BackendAppnestFunctions.md), [app-configuration/Manifest-Rules.md](../appnest-governance/app-configuration/Manifest-Rules.md), [Code-Review-and-AI-Generation-Checklist.md](../appnest-governance/Code-Review-and-AI-Generation-Checklist.md) (includes external API standards), [Appnest-Execution-Flows.md](../appnest-governance/Appnest-Execution-Flows.md).
+**Input:** Filled PRD; governance docs: [Appnest-App-Development-Guide.md](../appnest-governance/Appnest-App-Development-Guide.md), [appnest-functions/Appnest-Functions.md](../appnest-governance/appnest-functions/Appnest-Functions.md), [Backend function reference](../appnest-governance/appnest-functions/backend/README.md), [app-configuration/Manifest-Rules.md](../appnest-governance/app-configuration/Manifest-Rules.md), [Code-Review-and-AI-Generation-Checklist.md](../appnest-governance/Code-Review-and-AI-Generation-Checklist.md) (includes external API standards), [Appnest-Execution-Flows.md](../appnest-governance/Appnest-Execution-Flows.md).
 
 **Actions:**
 

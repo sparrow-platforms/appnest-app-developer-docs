@@ -39,5 +39,5 @@ The same **`window.AppnestFunctions`** object also includes **`$productParent`**
 
 For detailed information about function signatures, parameters, return shapes, and code-generation details, refer to:
 
-- **[backend/BackendAppnestFunctions.md](backend/BackendAppnestFunctions.md)** — Backend `AppnestFunctions` API reference  
+- **[Backend function reference](backend/README.md)** — Backend `AppnestFunctions` API reference  
 - **[Frontend-Appnest-Functions.md](Frontend-Appnest-Functions.md)** — Frontend `window.AppnestFunctions` reference
