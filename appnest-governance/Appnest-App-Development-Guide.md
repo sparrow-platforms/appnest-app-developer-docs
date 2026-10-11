@@ -2,7 +2,7 @@
 
 Single guide for your **app project** (the folder where you run `appnest-development-engine`): what you own, fixed entry points, **`manifest.json`** wiring, backend and frontend implementation, and local workflow.
 
-For a quick engine summary see **[Appnest-Development-Engine.md](appnest-development-engine/Appnest-Development-Engine.md)**; for CLI actions see **[Appnest-Development-Engine-Commands.md](appnest-development-engine/Appnest-Development-Engine-Commands.md)**.
+For a quick engine summary see **[engine overview](appnest-development-engine/README.md)**; for CLI actions see **[commands.md](appnest-development-engine/commands.md)**.
 
 ---
 
