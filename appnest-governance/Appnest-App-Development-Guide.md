@@ -2,7 +2,7 @@
 
 Single guide for your **app project** (the folder where you run `appnest-development-engine`): what you own, fixed entry points, **`manifest.json`** wiring, backend and frontend implementation, and local workflow.
 
-For a quick engine summary see **[Appnest-Development-Engine.md](appnest-development-engine/Appnest-Development-Engine.md)**; for CLI actions see **[Appnest-Development-Engine-Commands.md](appnest-development-engine/Appnest-Development-Engine-Commands.md)**.
+For a quick engine summary see **[engine overview](appnest-development-engine/README.md)**; for CLI actions see **[commands.md](appnest-development-engine/commands.md)**.
 
 ---
 
@@ -23,7 +23,7 @@ For a quick engine summary see **[Appnest-Development-Engine.md](appnest-develop
 | **`app-frontend/`** | Yes | Main UI (e.g. Vite + React). Built and served under `/app-frontend`. |
 | **`app-install-frontend/`** | Optional | Installation / onboarding UI, served under `/app-install-frontend` when present. |
 | **`manifest.json`** | Yes for packaging | Declares your app for the platform (e.g. backend functions, frontend locations, metadata). Validated by **`validate`**. |
-| **`.env`** | Recommended | Local config (ports, `CLIENT_SCRIPT_URL`, etc.). Read by the proxy; can be included in **`pack`**. |
+| **`.env`** | Yes, for `app start` | Local settings (port, `CLIENT_SCRIPT_URL`, `PACK_*` paths, etc.), read by the engine. Never included in **`pack`**. See [configuration.md](appnest-development-engine/configuration.md). |
 
 You do **not** edit `appnest-*` engine packages in normal app work—only your **`app-*`** trees and root config files.
 
@@ -222,21 +222,22 @@ your-app/
 
 ## Cross-cutting practices
 
-- **Try/catch** — Only a **parameterless** `catch { }` is allowed when the exception value is unused (no unused `catch (e)`). If you need the error, bind it and use it (log, rethrow, branch).  
-- **Run from the app root** — Commands use `process.cwd()` as your project root (`ORIGINAL_CWD` for child processes).  
+- **Try/catch** — If you don't use the exception value, write a **parameterless** `catch { }` (or name it `exception`); an unused `catch (e)` is reported as a warning by **`validate`**. If you need the error, bind it and use it (log, rethrow, branch).  
+- **Run from the app root** — Run every `appnest-development-engine app …` command from your app project folder (the one containing `app-backend/`, `app-frontend/` and `manifest.json`); the engine treats the current folder as the app project.  
 - **`appnest-development-engine app validate`** — Run before commits or CI: backend + frontend lint + **`manifest.json`** checks.  
-- **`appnest-development-engine app pack`** — Bundles default folders (`app-frontend`, `app-backend`, `app-install-frontend`), **`manifest.json`**, **`.env`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`.  
-- **Secrets** — Treat **`.env`** as sensitive; only pack or share it when your deployment model requires it.  
+- **`appnest-development-engine app pack`** — Zips the default folders (`app-frontend`, `app-backend`, `app-install-frontend`) and **`manifest.json`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`. Env files (`.env`, `.env.*`) are never packed. Run **`app bundle-frontend`** first; `pack` doesn't build the frontend.  
+- **Secrets** — Treat **`.env`** as sensitive and don't commit or share it. `pack` leaves it out, so the platform never receives it.  
 
 ---
 
 ## Quick command reminders
 
 ```bash
-appnest-development-engine app init       # scaffold (empty folder rules apply)
-appnest-development-engine app start      # proxy + backend + frontends
-appnest-development-engine app validate   # lint + manifest
-appnest-development-engine app pack       # build + zip for distribution
+appnest-development-engine app init              # scaffold (empty folder rules apply)
+appnest-development-engine app start             # proxy + backend + frontends
+appnest-development-engine app validate          # lint + manifest
+appnest-development-engine app bundle-frontend   # build app-frontend/dist
+appnest-development-engine app pack              # zip for distribution (run bundle-frontend first)
 ```
 
 ---
