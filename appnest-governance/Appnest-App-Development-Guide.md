@@ -23,7 +23,7 @@ For a quick engine summary see **[engine overview](appnest-development-engine/RE
 | **`app-frontend/`** | Yes | Main UI (e.g. Vite + React). Built and served under `/app-frontend`. |
 | **`app-install-frontend/`** | Optional | Installation / onboarding UI, served under `/app-install-frontend` when present. |
 | **`manifest.json`** | Yes for packaging | Declares your app for the platform (e.g. backend functions, frontend locations, metadata). Validated by **`validate`**. |
-| **`.env`** | Recommended | Local config (ports, `CLIENT_SCRIPT_URL`, etc.). Read by the proxy; can be included in **`pack`**. |
+| **`.env`** | Yes, for `app start` | Local settings (port, `CLIENT_SCRIPT_URL`, `PACK_*` paths, etc.), read by the engine. Never included in **`pack`**. See [configuration.md](appnest-development-engine/configuration.md). |
 
 You do **not** edit `appnest-*` engine packages in normal app work—only your **`app-*`** trees and root config files.
 
@@ -225,8 +225,8 @@ your-app/
 - **Try/catch** — Only a **parameterless** `catch { }` is allowed when the exception value is unused (no unused `catch (e)`). If you need the error, bind it and use it (log, rethrow, branch).  
 - **Run from the app root** — Commands use `process.cwd()` as your project root (`ORIGINAL_CWD` for child processes).  
 - **`appnest-development-engine app validate`** — Run before commits or CI: backend + frontend lint + **`manifest.json`** checks.  
-- **`appnest-development-engine app pack`** — Bundles default folders (`app-frontend`, `app-backend`, `app-install-frontend`), **`manifest.json`**, **`.env`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`.  
-- **Secrets** — Treat **`.env`** as sensitive; only pack or share it when your deployment model requires it.  
+- **`appnest-development-engine app pack`** — Zips the default folders (`app-frontend`, `app-backend`, `app-install-frontend`) and **`manifest.json`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`. Env files (`.env`, `.env.*`) are never packed. Run **`app bundle-frontend`** first; `pack` doesn't build the frontend.  
+- **Secrets** — Treat **`.env`** as sensitive and don't commit or share it. `pack` leaves it out, so the platform never receives it.  
 
 ---
 
