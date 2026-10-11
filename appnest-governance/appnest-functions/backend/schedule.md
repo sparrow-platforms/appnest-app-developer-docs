@@ -4,14 +4,9 @@ The `$schedule` module lets you create, get, update, pause, resume, and delete s
 
 **Schedule job kinds (`jobType`):** `ONE_TIME` (run once at a time), `CRON` (cron expression), `RECURRING` (fixed interval).
 
----
+**Import:** `const { $schedule } = AppnestFunctions;` — see [Import and rules](README.md#import).
 
-## Import / Usage
-
-```javascript
-const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
-const { $schedule } = AppnestFunctions;
-```
+**Handling a run:** each time a job fires, the platform calls the handler you registered for the **`onScheduledEvent`** event under `event_listener_functions` in `manifest.json` (see Manifest Rules in `appnest-governance`). Register it before creating schedules.
 
 ---
 
@@ -21,10 +16,10 @@ const { $schedule } = AppnestFunctions;
 |-------|--------|----------|-------------|
 | jobName    | string | yes      | Non-empty, max 30 characters. |
 | jobType    | string | yes      | `ONE_TIME` \| `CRON` \| `RECURRING` |
-| jobPayload | object | yes (create/update) | At least one key; delivered to the scheduled handler as `data` on the wire. |
+| jobPayload | object | yes (create/update) | At least one key. Delivered to your `onScheduledEvent` handler on each run. |
 | jobConfig  | object | yes (create/update) | Type-specific scheduling fields (see below). |
 
-The SDK maps `jobName` → `name`, `jobType` → `type`, and `jobPayload` → `data` on the wire. Fields inside `jobConfig` are sent as top-level `runAt`, `cronExpression`, and `repeat` (with `repeat` transformed to `{ every, unit }` for `RECURRING`).
+A job is identified by **`jobName` + `jobType`** together — pass both to `get`, `update`, `pause`, `resume`, and `delete`.
 
 ---
 
@@ -36,7 +31,7 @@ Pass a single **`jobConfig`** object. Allowed keys depend on **`jobType`** (extr
 
 | Field  | Type   | Required | Description |
 |--------|--------|----------|-------------|
-| runAt  | string | yes      | Date-time string (e.g. ISO 8601: `YYYY-MM-DDTHH:mm:ssZ`). |
+| runAt  | string | yes      | Date-time string, ISO 8601 recommended (e.g. `2026-02-05T10:00:00Z`). |
 
 Do not include `cronExpression` or `repeat`.
 
@@ -44,7 +39,7 @@ Do not include `cronExpression` or `repeat`.
 
 | Field          | Type   | Required | Description |
 |----------------|--------|----------|-------------|
-| cronExpression | string | yes      | Valid cron expression (e.g. `0 * * * *` for hourly). |
+| cronExpression | string | yes      | Valid 5-field cron expression (e.g. `0 * * * *` for hourly). |
 
 Do not include `runAt` or `repeat`.
 

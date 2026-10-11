@@ -2,14 +2,7 @@
 
 The `$next` module lets you invoke another function by name, optionally after a delay (in seconds).
 
----
-
-## Import / Usage
-
-```javascript
-const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
-const { $next } = AppnestFunctions;
-```
+**Import:** `const { $next } = AppnestFunctions;` — see [Import and rules](README.md#import).
 
 ---
 
