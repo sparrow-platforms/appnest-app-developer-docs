@@ -222,8 +222,8 @@ your-app/
 
 ## Cross-cutting practices
 
-- **Try/catch** — Only a **parameterless** `catch { }` is allowed when the exception value is unused (no unused `catch (e)`). If you need the error, bind it and use it (log, rethrow, branch).  
-- **Run from the app root** — Commands use `process.cwd()` as your project root (`ORIGINAL_CWD` for child processes).  
+- **Try/catch** — If you don't use the exception value, write a **parameterless** `catch { }` (or name it `exception`); an unused `catch (e)` is reported as a warning by **`validate`**. If you need the error, bind it and use it (log, rethrow, branch).  
+- **Run from the app root** — Run every `appnest-development-engine app …` command from your app project folder (the one containing `app-backend/`, `app-frontend/` and `manifest.json`); the engine treats the current folder as the app project.  
 - **`appnest-development-engine app validate`** — Run before commits or CI: backend + frontend lint + **`manifest.json`** checks.  
 - **`appnest-development-engine app pack`** — Zips the default folders (`app-frontend`, `app-backend`, `app-install-frontend`) and **`manifest.json`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`. Env files (`.env`, `.env.*`) are never packed. Run **`app bundle-frontend`** first; `pack` doesn't build the frontend.  
 - **Secrets** — Treat **`.env`** as sensitive and don't commit or share it. `pack` leaves it out, so the platform never receives it.  
@@ -233,10 +233,11 @@ your-app/
 ## Quick command reminders
 
 ```bash
-appnest-development-engine app init       # scaffold (empty folder rules apply)
-appnest-development-engine app start      # proxy + backend + frontends
-appnest-development-engine app validate   # lint + manifest
-appnest-development-engine app pack       # build + zip for distribution
+appnest-development-engine app init              # scaffold (empty folder rules apply)
+appnest-development-engine app start             # proxy + backend + frontends
+appnest-development-engine app validate          # lint + manifest
+appnest-development-engine app bundle-frontend   # build app-frontend/dist
+appnest-development-engine app pack              # zip for distribution (run bundle-frontend first)
 ```
 
 ---
