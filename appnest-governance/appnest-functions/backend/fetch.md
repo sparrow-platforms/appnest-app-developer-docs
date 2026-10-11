@@ -2,14 +2,7 @@
 
 The `$fetch` module lets you make outbound HTTP requests (GET, POST, PUT, DELETE, PATCH) with URL, headers, body, and optional **options** (`isOauth`, `maxAttempts`, `additionalOptions`).
 
----
-
-## Import / Usage
-
-```javascript
-const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
-const { $fetch } = AppnestFunctions;
-```
+**Import:** `const { $fetch } = AppnestFunctions;` — see [Import and rules](README.md#import).
 
 ---
 
@@ -25,21 +18,19 @@ const { $fetch } = AppnestFunctions;
 
 | Parameter | Type   | Required | Default | Constraints |
 |-----------|--------|----------|---------|-------------|
-| url       | string | yes      | —       | Must start with `https://` or `http://`, max 2048 chars |
+| url       | string | yes      | —       | Must start with `https://` or `http://` (or with a placeholder such as `<%=iparams.api_url%>`), max 2048 chars |
 | method    | string | yes      | —       | One of: `GET`, `POST`, `PUT`, `DELETE`, `PATCH` |
 | headers   | object | no       | `{}`    | String key/value pairs; max 1000 keys; each value string, max 1000 chars |
-| body      | object | no       | `{}`    | String key/value pairs; max 1000 keys; each value string, max 1000 chars |
+| body      | object | no       | `{}`    | Max 1000 top-level keys |
 | options   | object | no       | `{}`    | See **options** below |
 
-**options** (merged into the platform request payload):
+**options:**
 
 | Field              | Type    | Default | Description |
 |--------------------|---------|---------|-------------|
 | `isOauth`          | boolean | `false` | Whether to use OAuth for the outbound request. |
 | `maxAttempts`      | number  | `0`     | Maximum retry attempts (platform-defined behavior). |
-| `additionalOptions`| object  | `{}`    | Passthrough bag for additional/future options. Its keys are spread as **top-level fields** into the outbound options payload and forwarded as-is to the platform — allowing new options to be sent without an SDK change. Cannot override the SDK's own fields (`isOAuth`, `maxAttempts`, `headers`, `userOauthId`). |
-
-The SDK builds the outbound `options` object as: any keys from `additionalOptions` (spread first), then `isOauth`, `maxAttempts`, your **headers**, and `userOauthId` (empty string unless set by the platform).
+| `additionalOptions`| object  | `{}`    | Extra platform-supported options, passed through as-is. Use it only for options that don't have a dedicated field yet. It cannot override `isOauth`, `maxAttempts`, or `headers`. |
 
 **Return:** `Promise<{ headers: Object, body: any, status: number }>` — response headers, response body, and HTTP status code.
 

@@ -2,14 +2,7 @@
 
 The `$file` module provides file storage helpers: signed URLs for upload/download, delete, list, and existence check.
 
----
-
-## Import / Usage
-
-```javascript
-const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
-const { $file } = AppnestFunctions;
-```
+**Import:** `const { $file } = AppnestFunctions;` — see [Import and rules](README.md#import).
 
 ---
 
@@ -18,7 +11,9 @@ const { $file } = AppnestFunctions;
 | Parameter   | Type   | Required | Default  | Description        |
 |------------|--------|----------|----------|--------------------|
 | path       | string | yes      | —        | File key/path      |
-| visibility | string | no       | `PUBLIC` | `PUBLIC` or `PRIVATE` |
+| visibility | string | no       | `PRIVATE` | `PRIVATE` or `PUBLIC` |
+
+Files are **private by default**. Pass `visibility: 'PUBLIC'` only for files that anyone with the URL may read, and use the same `visibility` for every call on a file — a `PUBLIC` file and a `PRIVATE` file are stored separately even at the same `path`.
 
 **Return shape:** All methods return the response object directly (no `{ data, status }` wrapper). See the Return column below.
 
@@ -39,12 +34,15 @@ const { $file } = AppnestFunctions;
 ## Examples
 
 ```javascript
-// Get upload URL (default PUBLIC); returns { preSignedUrl }
+// Get upload URL (private by default); returns { preSignedUrl }
 const upload = await $file.getUploadUrl({ path: 'reports/2026-02-09.csv' });
 
-// Get download URL (private); returns { preSignedUrl }
-const read = await $file.getDownloadUrl({ path: 'reports/2026-02-09.csv', visibility: 'PRIVATE' });
-// read === { preSignedUrl: "https://...s3.amazonaws.com/...?X-Amz-Security-Token=..." }
+// Get download URL for the same private file; returns { preSignedUrl }
+const read = await $file.getDownloadUrl({ path: 'reports/2026-02-09.csv' });
+// read === { preSignedUrl: "https://..." }
+
+// Public file: pass visibility on every call for that file
+const logo = await $file.getUploadUrl({ path: 'assets/logo.png', visibility: 'PUBLIC' });
 
 // Delete file; returns { deleted: true } or { deleted: false }
 await $file.delete({ path: 'reports/old.csv' });
