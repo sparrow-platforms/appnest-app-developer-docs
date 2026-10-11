@@ -22,7 +22,7 @@ Back to the **[engine overview](README.md)** · `.env` keys: **[configuration.md
 | [`start`](#start) | Runs the app locally behind one port. |
 | [`validate`](#validate) | Lints your app code and checks `manifest.json`. |
 | [`bundle-frontend`](#bundle-frontend) | Builds `app-frontend/dist` and `app-install-frontend/dist`. |
-| [`pack`](#pack) | Zips the app (with the already-built frontend) into `app-pack-zip/`. |
+| [`pack`](#pack) | Builds the frontends, then zips the app into `app-pack-zip/`. |
 | [`ai-context`](#ai-context) | Downloads the Appnest developer docs into `appnest-ai-context/`. |
 
 Other invocations:
@@ -95,14 +95,15 @@ A folder that doesn't exist is skipped with a warning. Each `dist/` is emptied b
 
 ## `pack`
 
-Packs the app for upload. It does **not** build the frontend: run [`bundle-frontend`](#bundle-frontend) first.
+Packs the app for upload.
 
-1. In `app-frontend/dist/index.html`, replaces `/frontend/` with `./`. Fails if that file doesn't exist.
-2. Copies into a temporary `appnest-app-pack/` folder:
+1. Builds your frontends, exactly like [`bundle-frontend`](#bundle-frontend). If a build fails, `pack` stops with exit code 1.
+2. In `app-frontend/dist/index.html`, replaces `/frontend/` with `./`. If that file doesn't exist after the build (e.g. there is no `app-frontend/`), `pack` stops with exit code 1.
+3. Copies into a temporary `appnest-app-pack/` folder:
    - `app-frontend/`, `app-backend/` and `app-install-frontend/`, whole (including `src/` and any `node_modules/`); missing folders are skipped with a warning;
    - `manifest.json`;
    - the extra folders and files listed in `PACK_FOLDER_PATHS` / `PACK_FILE_PATHS` in `.env` ([configuration.md](configuration.md#env-keys)).
-3. Zips it to **`app-pack-zip/app-pack-<timestamp>.zip`** (the zip contains the `appnest-app-pack/` folder) and deletes the temporary folder.
+4. Zips it to **`app-pack-zip/app-pack-<timestamp>.zip`** (the zip contains the `appnest-app-pack/` folder) and deletes the temporary folder.
 
 **Env files are never packed.** `.env` and `.env.*` (e.g. `.env.local`, `.env.production`) are left out wherever they are, with a `🔒 Skipping …` warning. Templates (`.env.example`, `.env.sample`, `.env.template`) are packed.
 

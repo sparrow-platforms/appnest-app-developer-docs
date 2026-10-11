@@ -36,11 +36,10 @@ Before you upload:
 
 ```bash
 appnest-development-engine app validate          # lint + manifest checks; exits 1 on errors
-appnest-development-engine app bundle-frontend   # build app-frontend/dist (and app-install-frontend/dist)
-appnest-development-engine app pack              # zip the app into app-pack-zip/
+appnest-development-engine app pack              # build the frontends, then zip the app into app-pack-zip/
 ```
 
-`app pack` does **not** build your frontend. Run `app bundle-frontend` first; `pack` fails if `app-frontend/dist/index.html` doesn't exist.
+To build without packing (e.g. to check the production build), run `app bundle-frontend`.
 
 ## What the engine provides
 
