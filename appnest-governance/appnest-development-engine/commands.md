@@ -35,7 +35,7 @@ Other invocations:
 | `appnest-development-engine app -h` (`--help`) | Usage for `app`, followed by the same list. |
 | `appnest-development-engine -h` (`--help`), or no arguments | Top-level usage. |
 
-An unknown action (e.g. `app strat`) prints the list of actions.
+An unknown action (e.g. `app strat`) prints the list of actions and exits with code 1.
 
 ---
 
@@ -60,7 +60,7 @@ Exits with code 1 if a check fails.
 
 Runs `npm install` in each part of the engine, then in your **`app-frontend/`**. Run it once after installing or upgrading the engine, and again when `app-frontend/package.json` changes.
 
-- Run it from your app project folder: it fails (exit code 1) if `app-frontend/package.json` doesn't exist.
+- Run it from your app project folder to include `app-frontend`. If the current folder has no `app-frontend/package.json` (e.g. right after `npm install -g`), it installs the engine's dependencies and skips `app-frontend` with a warning.
 - It does **not** install `app-backend` or `app-install-frontend` dependencies. Run `npm install` in those folders yourself if they have a `package.json` with dependencies.
 
 ## `start`
