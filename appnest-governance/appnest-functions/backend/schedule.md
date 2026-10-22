@@ -15,11 +15,11 @@ The `$schedule` module lets you create, get, update, pause, resume, and delete s
 | Field | Type   | Required | Constraints |
 |-------|--------|----------|-------------|
 | jobName    | string | yes      | Non-empty, max 30 characters. |
-| jobType    | string | yes      | `ONE_TIME` \| `CRON` \| `RECURRING` |
+| jobType    | string | yes (create/update) | `ONE_TIME` \| `CRON` \| `RECURRING`. Optional for `get`, `pause`, `resume`, `delete`; validated if passed. |
 | jobPayload | object | yes (create/update) | At least one key. Delivered to your `onScheduledEvent` handler on each run. |
 | jobConfig  | object | yes (create/update) | Type-specific scheduling fields (see below). |
 
-A job is identified by **`jobName` + `jobType`** together — pass both to `get`, `update`, `pause`, `resume`, and `delete`.
+A job is identified by **`jobName`** alone: names are unique per installation, whatever the type. `update` still needs `jobType`, and it must match the job's type. If you pass `jobType` to `delete`, it must match too.
 
 ---
 
@@ -63,13 +63,15 @@ Do not include `runAt` or `cronExpression`.
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | create | `$schedule.create({ jobName, jobType, jobPayload, jobConfig })` | Create a schedule. Returns nothing. |
-| get    | `$schedule.get({ jobName, jobType })` | Get schedule by jobName and jobType. Returns nothing. |
+| get    | `$schedule.get({ jobName, jobType? })` | Get a schedule by jobName. Returns `{ jobName, jobType, jobPayload, status }`. |
 | update | `$schedule.update({ jobName, jobType, jobPayload, jobConfig })` | Update existing schedule. Returns nothing. |
-| pause  | `$schedule.pause({ jobName, jobType })` | Pause a schedule. Returns nothing. |
-| resume | `$schedule.resume({ jobName, jobType })` | Resume a paused schedule. Returns nothing. |
-| delete | `$schedule.delete({ jobName, jobType })` | Delete a schedule. Returns nothing. |
+| pause  | `$schedule.pause({ jobName, jobType? })` | Pause a schedule. Returns nothing. |
+| resume | `$schedule.resume({ jobName, jobType? })` | Resume a paused schedule. Returns nothing. |
+| delete | `$schedule.delete({ jobName, jobType? })` | Delete a schedule. Returns nothing. |
 
-**Return:** All schedule methods return `Promise<void>` (no response body). They resolve when the operation completes.
+**Return:** `get` returns `Promise<{ jobName, jobType, jobPayload, status }>`, where `status` is `ACTIVE` \| `PAUSED` \| `COMPLETED`. The other methods return `Promise<void>` and resolve when the operation completes.
+
+**Errors:** `get`, `update`, `pause`, `resume` and `delete` reject with a 404 error if no job with that `jobName` exists.
 
 ---
 
@@ -108,10 +110,11 @@ await $schedule.create({
 });
 ```
 
-**Get:** (returns nothing; use to ensure the schedule exists or to trigger a side effect)
+**Get:**
 
 ```javascript
-await $schedule.get({ jobName: 'hourlyReport', jobType: 'CRON' });
+const job = await $schedule.get({ jobName: 'hourlyReport' });
+// { jobName: 'hourlyReport', jobType: 'CRON', jobPayload: { reportType: 'hourly' }, status: 'ACTIVE' }
 ```
 
 **Update:**
@@ -128,12 +131,12 @@ await $schedule.update({
 **Pause / Resume:**
 
 ```javascript
-await $schedule.pause({ jobName: 'hourlyReport', jobType: 'CRON' });
-await $schedule.resume({ jobName: 'hourlyReport', jobType: 'CRON' });
+await $schedule.pause({ jobName: 'hourlyReport' });
+await $schedule.resume({ jobName: 'hourlyReport' });
 ```
 
 **Delete:**
 
 ```javascript
-await $schedule.delete({ jobName: 'hourlyReport', jobType: 'CRON' });
+await $schedule.delete({ jobName: 'hourlyReport' });
 ```

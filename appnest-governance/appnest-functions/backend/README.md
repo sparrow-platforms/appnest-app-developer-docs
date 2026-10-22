@@ -110,16 +110,16 @@ Use `<%=iparams.<key>%>` for installation parameters and `<%=user_oauth.access_t
 
 ### $schedule — [schedule.md](schedule.md)
 
-`jobName` (max 30 characters) and `jobType` (`ONE_TIME` \| `CRON` \| `RECURRING`) identify a job on every call.
+`jobName` (max 30 characters) identifies a job. `jobType` (`ONE_TIME` \| `CRON` \| `RECURRING`) is required for create and update, and optional for get, pause, resume and delete.
 
 | Method | Signature | Returns |
 |--------|-----------|---------|
 | create | `$schedule.create({ jobName, jobType, jobPayload, jobConfig })` | `Promise<void>` |
-| get | `$schedule.get({ jobName, jobType })` | `Promise<void>` |
+| get | `$schedule.get({ jobName, jobType? })` | `Promise<{ jobName, jobType, jobPayload, status }>` |
 | update | `$schedule.update({ jobName, jobType, jobPayload, jobConfig })` | `Promise<void>` |
-| pause | `$schedule.pause({ jobName, jobType })` | `Promise<void>` |
-| resume | `$schedule.resume({ jobName, jobType })` | `Promise<void>` |
-| delete | `$schedule.delete({ jobName, jobType })` | `Promise<void>` |
+| pause | `$schedule.pause({ jobName, jobType? })` | `Promise<void>` |
+| resume | `$schedule.resume({ jobName, jobType? })` | `Promise<void>` |
+| delete | `$schedule.delete({ jobName, jobType? })` | `Promise<void>` |
 
 `jobConfig` by type: `ONE_TIME` → `{ runAt }`, `CRON` → `{ cronExpression }`, `RECURRING` → `{ repeat: { frequency, timeUnit } }`.
 
