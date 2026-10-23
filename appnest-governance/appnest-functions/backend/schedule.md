@@ -31,7 +31,7 @@ Pass a single **`jobConfig`** object. Allowed keys depend on **`jobType`** (extr
 
 | Field  | Type   | Required | Description |
 |--------|--------|----------|-------------|
-| runAt  | string | yes      | Date-time string, ISO 8601 recommended (e.g. `2026-02-05T10:00:00Z`). |
+| runAt  | string | yes      | ISO 8601 date-time in the future (e.g. `2030-02-05T10:00:00Z`). Sent as UTC; a value without an offset (e.g. `2030-02-05 10:00:00`) is read as UTC. |
 
 Do not include `cronExpression` or `repeat`.
 
@@ -83,7 +83,7 @@ Do not include `runAt` or `cronExpression`.
 await $schedule.create({
   jobName: 'dailyReportOnce',
   jobType: 'ONE_TIME',
-  jobConfig: { runAt: '2026-02-05T10:00:00Z' },
+  jobConfig: { runAt: '2030-02-05T10:00:00Z' },
   jobPayload: { reportType: 'daily' }
 });
 ```
