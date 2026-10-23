@@ -16,6 +16,12 @@ The `$db` module provides typed key/value storage operations. Use the namespaced
 
 **Size limit:** a stored value can be at most **380KB**. Writes over the limit throw an error.
 
+**Create before you modify:** only `set` creates a key. Operations that change an existing value need the key to exist already, with the right type:
+- `$db.number.increment` / `decrement`
+- `$db.list.append` / `prepend` / `updateItemAtIndex` / `removeItemAtIndex`
+
+On a key that doesn't exist yet they reject with a **400** `Key '<key>' does not exist`. On a key holding another type they reject with **400** `Key '<key>' value is not of type <type>`. Create the key with `set` first (for example `$db.list.set({ key, value: [] })` or `$db.number.set({ key, value: 0 })`), or check it with `$db.typeOf`.
+
 ---
 
 ## Data Types
@@ -99,6 +105,8 @@ await $db.string.delete({ key: 'welcome' });
 | increment | `$db.number.increment({ key, value })` | `key` (string, required), `value` (number, optional) | `Promise<void>` |
 | decrement | `$db.number.decrement({ key, value })` | `key` (string, required), `value` (number, optional) | `Promise<void>` |
 
+`increment` / `decrement` need the key to exist as a number. Create it with `set` first (see [Create before you modify](#common-rules)).
+
 **Example:**
 
 ```javascript
@@ -122,10 +130,12 @@ await $db.number.delete({ key: 'counter' });
 | updateItemAtIndex | `$db.list.updateItemAtIndex({ key, value, index })` | `key`, `value` (array), `index` (number, required) | `Promise<void>` |
 | removeItemAtIndex | `$db.list.removeItemAtIndex({ key, index })` | `key`, `index` (number, required) | `Promise<void>` |
 
+`append`, `prepend`, `updateItemAtIndex` and `removeItemAtIndex` need the key to exist as a list. They don't create it. Create it with `set` first, as in the example below (see [Create before you modify](#common-rules)).
+
 **Example:**
 
 ```javascript
-await $db.list.set({ key: 'logs', value: [] });
+await $db.list.set({ key: 'logs', value: [] });   // create the list before appending
 await $db.list.append({ key: 'logs', value: ['entry-1'] });
 const res = await $db.list.get({ key: 'logs' });
 await $db.list.removeItemAtIndex({ key: 'logs', index: 0 });
