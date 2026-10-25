@@ -143,9 +143,11 @@ All methods return the result directly — there is no `{ data, status }` wrappe
 | **$fetch** | `{ headers, body, status }` of the outbound response. |
 | **$file** | A small result object, e.g. `{ preSignedUrl }`, `{ deleted }`, `{ keys }`, `{ exists }`. |
 | **$next** | The response body, e.g. `{ success: true }`. |
-| **$schedule** | Nothing. |
+| **$schedule** | `get` returns `{ jobName, jobType, jobPayload, status }`. The other methods return nothing. |
 
 On invalid input every method throws an `Error` with a message describing the problem (e.g. `Key must be a non-empty string`).
+
+If the platform rejects a call, the promise rejects with an error whose `response.status` is the HTTP status and `response.data.message` is the reason. For example, `$schedule` uses `404` when no job with that `jobName` exists and `409` when `create` uses a `jobName` that's already taken. See [schedule.md](schedule.md#api).
 
 ---
 
