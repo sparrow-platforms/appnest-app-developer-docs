@@ -71,7 +71,9 @@ Do not include `runAt` or `cronExpression`.
 
 **Return:** `get` returns `Promise<{ jobName, jobType, jobPayload, status }>`, where `status` is `ACTIVE` \| `PAUSED` \| `COMPLETED`. The other methods return `Promise<void>` and resolve when the operation completes.
 
-**Errors:** `get`, `update`, `pause`, `resume` and `delete` reject with a 404 error if no job with that `jobName` exists.
+**Errors:**
+- `create` rejects with a 409 error (`Schedule <jobName> already exists`) if a job with that `jobName` already exists for this installation, even if the existing job has a different `jobType`. `create` never overwrites: the existing job is left as it was. To change a job, use `update`. To change its `jobType`, `delete` it and then `create` it again. A `ONE_TIME` job that has already run stays as `status: 'COMPLETED'` and keeps its name, so `delete` it before reusing the name.
+- `get`, `update`, `pause`, `resume` and `delete` reject with a 404 error if no job with that `jobName` exists.
 
 ---
 
@@ -139,4 +141,20 @@ await $schedule.resume({ jobName: 'hourlyReport' });
 
 ```javascript
 await $schedule.delete({ jobName: 'hourlyReport' });
+```
+
+**Create only if it doesn't exist yet:**
+
+```javascript
+try {
+  await $schedule.get({ jobName: 'hourlyReport' });
+} catch (error) {
+  if (error.response?.status !== 404) throw error;
+  await $schedule.create({
+    jobName: 'hourlyReport',
+    jobType: 'CRON',
+    jobConfig: { cronExpression: '0 * * * *' },
+    jobPayload: { reportType: 'hourly' }
+  });
+}
 ```
