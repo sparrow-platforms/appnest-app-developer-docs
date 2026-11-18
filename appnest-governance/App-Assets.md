@@ -78,7 +78,7 @@ Every deploy of your app publishes a **fresh copy** of `app-assets/public/` at a
 
 ## `$asset` API
 
-**Backend only.** `$asset` is one of the [backend Appnest functions](appnest-functions/backend/README.md):
+**Backend only.** `$asset` is one of the [backend Appnest functions](appnest-functions/backend/README.md). Full reference: [asset.md](appnest-functions/backend/asset.md).
 
 ```javascript
 const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
@@ -89,7 +89,7 @@ const { $asset } = AppnestFunctions;
 |--------|-----------|---------|-------|
 | [getUrl](#geturl) | `$asset.getUrl({ path })` | `string` — the file's URL | Sync |
 | [getBaseUrl](#getbaseurl) | `$asset.getBaseUrl()` | `string` — the base URL, ending in `/` | Sync |
-| [list](#list) | `$asset.list({ path })` | `Promise<{ keys: string[] }>` | Async |
+| [list](#list) | `$asset.list({ path? })` | `Promise<{ keys: string[] }>` | Async |
 | [exists](#exists) | `$asset.exists({ path })` | `Promise<{ exists: boolean }>` | Async |
 
 The shapes follow [`$file`](appnest-functions/backend/file.md) (`{ path }` in, `{ keys }` / `{ exists }` out), but `$asset` has no `visibility`: every asset is public. Results are returned directly, with no `{ data, status }` wrapper.
@@ -125,7 +125,7 @@ const { keys } = await $asset.list({ path: 'templates/' });
 const { keys: all } = await $asset.list({ path: '' });   // every file
 ```
 
-- `path` is a **folder prefix**. A non-empty path without a trailing `/` gets one (`'templates'` lists `templates/…`). `''` lists every file.
+- `path` is a **folder prefix**. A non-empty path without a trailing `/` gets one (`'templates'` lists `templates/…` and its subfolders). `''`, the default, lists every file.
 - Keys are **relative to `app-assets/public/`** (not to the folder you listed), so you can pass any key straight to `getUrl`. This differs from `$file.list`, which returns keys relative to the listed folder.
 - Only files are listed, not folders. An empty or unknown folder gives `{ keys: [] }`.
 
@@ -135,15 +135,15 @@ const { keys: all } = await $asset.list({ path: '' });   // every file
 const { exists } = await $asset.exists({ path: 'images/logo.png' });
 ```
 
-- Exact match on the file path. Returns `{ exists: false }` for a file that isn't in this release (it doesn't throw).
+- Exact match on the file path. Returns `{ exists: false }` for a file that isn't in this release, and for a folder path (it doesn't throw).
 
 ### Errors
 
 | Error | When |
 |-------|------|
-| `AssetsNotAvailableError` | The running release has no `app-assets/public/` folder. Thrown by **every** method, including `getUrl` and `getBaseUrl`. |
+| `AssetsNotAvailableError` (`error.code === 'ASSETS_NOT_AVAILABLE'`) | The running release has no `app-assets/public/` folder. Thrown by **every** method, including `getUrl` and `getBaseUrl`. |
 | `Error` (path message) | `path` is missing, not a string, or breaks the path rules above. |
-| Rejected promise from `list` / `exists` | The platform couldn't answer (for example a temporary error). Retrying later is safe. |
+| Rejected promise from `list` / `exists` | The platform couldn't answer. `error.response.status` is the HTTP status. Calling again retries. |
 
 If your app can run without assets, catch `AssetsNotAvailableError` and fall back:
 
@@ -152,7 +152,7 @@ let logoUrl = null;
 try {
   logoUrl = $asset.getUrl({ path: 'images/logo.png' });
 } catch (error) {
-  if (error.name !== 'AssetsNotAvailableError') throw error;
+  if (error.code !== 'ASSETS_NOT_AVAILABLE') throw error;
 }
 ```
 
@@ -336,7 +336,7 @@ http://localhost:<port>/app-assets/public/<path>
 
 (`<port>` is `APPNEST_ENGINE_PORT`, default 3456; see [configuration.md](appnest-development-engine/configuration.md#local-urls).)
 
-- `$asset.getUrl` and `getBaseUrl` return these local URLs, and `list` and `exists` read the local folder. The same backend code works locally and after deploy.
+- `$asset.getUrl` and `getBaseUrl` return these local URLs, and `list` and `exists` read the local folder as it is, so files you add show up right away. The same backend code works locally and after deploy.
 - Locally there is no deploy, so the URL of a file stays the same between edits. After deploy it won't: don't let a URL you saw locally end up in your code.
 
 ### `app validate` and `app pack`
