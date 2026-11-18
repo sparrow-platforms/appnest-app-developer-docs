@@ -15,6 +15,7 @@ Available helpers (destructure only what you need):
 - **`$db`** — typed key/value storage  
 - **`$fetch`** — outbound HTTP requests  
 - **`$file`** — signed upload/download and object operations  
+- **`$asset`** — URLs of the static files you ship in `app-assets/public/` (see [App-Assets.md](../App-Assets.md))  
 - **`$next`** — invoke another backend function  
 - **`$schedule`** — one-time, cron, or recurring jobs  
 - **`getTraceId`** — request correlation  

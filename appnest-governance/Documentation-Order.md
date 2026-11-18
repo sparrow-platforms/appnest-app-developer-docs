@@ -18,16 +18,17 @@ Folders and files under `appnest-governance/` are **not** numbered. Use this lis
 
 ## 4. app-configuration
 
-6. [app-configuration/Manifest-Rules.md](app-configuration/Manifest-Rules.md) — `manifest.json` schema and rules (use for code generation).
+6. [app-configuration/Manifest-Rules.md](app-configuration/Manifest-Rules.md) — `manifest.json` schema and rules (use for code generation).  
+7. [App-Assets.md](App-Assets.md) — static files in `app-assets/public/`, `$asset`, and the OAuth `redirect_page`.
 
 ## 5. Frontend (read before generating UI)
 
-7. [App-Frontend-Rules.md](App-Frontend-Rules.md) — **read first** for any UI work (enforced for AI).  
-8. [Twigs-UI-Reference.md](Twigs-UI-Reference.md) — Twigs `package.json` versions and HTML → Twigs mapping (use with App-Frontend-Rules).
+8. [App-Frontend-Rules.md](App-Frontend-Rules.md) — **read first** for any UI work (enforced for AI).  
+9. [Twigs-UI-Reference.md](Twigs-UI-Reference.md) — Twigs `package.json` versions and HTML → Twigs mapping (use with App-Frontend-Rules).
 
 ## 6. Integration & pre-ship checklist
 
-9. [Code-Review-and-AI-Generation-Checklist.md](Code-Review-and-AI-Generation-Checklist.md) — **external API standards** (idempotency, errors, rate limits, retries, secrets) and **full review checklist** (runtime, SDK, manifest, entries, Twigs, AI). Read the External API section before outbound **`$fetch`** work; run the whole checklist before merge.
+10. [Code-Review-and-AI-Generation-Checklist.md](Code-Review-and-AI-Generation-Checklist.md) — **external API standards** (idempotency, errors, rate limits, retries, secrets) and **full review checklist** (runtime, SDK, manifest, entries, Twigs, AI). Read the External API section before outbound **`$fetch`** work; run the whole checklist before merge.
 
 ---
 

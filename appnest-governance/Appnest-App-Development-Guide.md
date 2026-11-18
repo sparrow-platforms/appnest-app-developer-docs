@@ -22,6 +22,7 @@ For a quick engine summary see **[engine overview](appnest-development-engine/RE
 | **`app-backend/`** | Yes | Server logic: `server.js` is loaded by the engine; expose handlers the platform can call. |
 | **`app-frontend/`** | Yes | Main UI (e.g. Vite + React). Built and served under `/app-frontend`. |
 | **`app-install-frontend/`** | Optional | Installation / onboarding UI, served under `/app-install-frontend` when present. |
+| **`app-assets/public/`** | Optional | Static files (images, HTML pages, templates, documents) published with each release. Public. Get their URLs in the backend with **`$asset`** — see [App-Assets.md](App-Assets.md). |
 | **`manifest.json`** | Yes for packaging | Declares your app for the platform (e.g. backend functions, frontend locations, metadata). Validated by **`validate`**. |
 | **`.env`** | Yes, for `app start` | Local settings (port, `CLIENT_SCRIPT_URL`, `PACK_*` paths, etc.), read by the engine. Never included in **`pack`**. See [configuration.md](appnest-development-engine/configuration.md). |
 
@@ -210,12 +211,14 @@ your-app/
 │       ├── components/
 │       ├── utils/client.js       # getClient()
 │       └── css/
-└── app-install-frontend/         # Optional
-    └── src/
-        ├── App.jsx
-        ├── components/
-        ├── utils/client.js
-        └── css/
+├── app-install-frontend/         # Optional
+│   └── src/
+│       ├── App.jsx
+│       ├── components/
+│       ├── utils/client.js
+│       └── css/
+└── app-assets/                   # Optional: static files, see App-Assets.md
+    └── public/
 ```
 
 ---
@@ -225,7 +228,7 @@ your-app/
 - **Try/catch** — If you don't use the exception value, write a **parameterless** `catch { }` (or name it `exception`); an unused `catch (e)` is reported as a warning by **`validate`**. If you need the error, bind it and use it (log, rethrow, branch).  
 - **Run from the app root** — Run every `appnest-development-engine app …` command from your app project folder (the one containing `app-backend/`, `app-frontend/` and `manifest.json`); the engine treats the current folder as the app project.  
 - **`appnest-development-engine app validate`** — Run before commits or CI: backend + frontend lint + **`manifest.json`** checks.  
-- **`appnest-development-engine app pack`** — Zips the default folders (`app-frontend`, `app-backend`, `app-install-frontend`) and **`manifest.json`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`. Env files (`.env`, `.env.*`) are never packed. It builds the frontend first (same as **`app bundle-frontend`**) and stops if the build fails.  
+- **`appnest-development-engine app pack`** — Zips the default folders (`app-frontend`, `app-backend`, `app-install-frontend`, and `app-assets/public/` when present) and **`manifest.json`**, plus optional **`PACK_FOLDER_PATHS`** / **`PACK_FILE_PATHS`** from `.env`. Env files (`.env`, `.env.*`) are never packed. It builds the frontend first (same as **`app bundle-frontend`**) and stops if the build fails.  
 - **Secrets** — Treat **`.env`** as sensitive and don't commit or share it. `pack` leaves it out, so the platform never receives it.  
 
 ---
@@ -246,4 +249,4 @@ appnest-development-engine app pack              # build + zip for distribution
 - **Recommended reading order:** [Documentation-Order.md](Documentation-Order.md)  
 - **Full document index:** [README.md](README.md)  
 - **Tools hub (repo root):** [AppnestTools.md](../AppnestTools.md)  
-- **Deep reference:** [Manifest-Rules.md](app-configuration/Manifest-Rules.md), [Backend function reference](appnest-functions/backend/README.md), [App-Frontend-Rules.md](App-Frontend-Rules.md), [Twigs-UI-Reference.md](Twigs-UI-Reference.md)  
+- **Deep reference:** [Manifest-Rules.md](app-configuration/Manifest-Rules.md), [App-Assets.md](App-Assets.md), [Backend function reference](appnest-functions/backend/README.md), [App-Frontend-Rules.md](App-Frontend-Rules.md), [Twigs-UI-Reference.md](Twigs-UI-Reference.md)  
