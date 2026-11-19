@@ -4,7 +4,7 @@ Ship static files with your app — images, HTML pages and fragments, email temp
 
 Files in `app-assets/public/` are **public**: anyone with the URL can read them. Never put secrets, keys, tokens or customer data there.
 
-**On this page:** [The folder](#the-folder) · [Rules and limits](#rules-and-limits) · [URLs change on every deploy](#urls-change-on-every-deploy) · [`$asset` API](#asset-api) · [Showing assets in the frontend](#showing-assets-in-the-frontend) · [OAuth redirect page](#oauth-redirect-page) · [Local development and packing](#local-development-and-packing)
+**On this page:** [The folder](#the-folder) · [Rules and limits](#rules-and-limits) · [URLs change on every deploy](#urls-change-on-every-deploy) · [`$asset` API](#asset-api) · [Showing assets in the frontend](#showing-assets-in-the-frontend) · [Local development and packing](#local-development-and-packing)
 
 ---
 
@@ -29,7 +29,7 @@ your-app/
 - **Paths are relative to `app-assets/public/`.** The file above is `images/logo.png`, never `public/images/logo.png` or `app-assets/public/images/logo.png`.
 - Files are published **exactly as you ship them**. There is no build step, minification or image processing.
 - Assets are **read-only** at runtime and fixed for a release. To store files your app creates or users upload, use [`$file`](appnest-functions/backend/file.md).
-- **HTML files render as web pages** in the browser (they are not downloaded), so you can ship pages that run on their own, such as an [OAuth redirect page](#oauth-redirect-page). SVG files render too. Every file is served with the content type that matches its extension, and browsers are told not to guess a different type.
+- **HTML files render as web pages** in the browser (they are not downloaded), so you can ship pages that run on their own. SVG files render too. Every file is served with the content type that matches its extension, and browsers are told not to guess a different type.
 
 ### When to use `app-assets/` and when to use `app-frontend/`
 
@@ -226,104 +226,6 @@ To pass many files, return `$asset.getBaseUrl()` once and join relative paths to
 
 ---
 
-## OAuth redirect page
-
-If your app uses OAuth (see `oauth_config` in [Manifest-Rules.md](app-configuration/Manifest-Rules.md)), you can send the user to **your own page in `app-assets/public/`** when they finish authorizing, instead of a URL you pass at connect time or the platform's default page. This is useful when the connect flow opens in a popup or new tab and your page should close it or tell the user what happened.
-
-### 1. Ship the page
-
-```text
-app-assets/public/auth/redirect.html
-```
-
-### 2. Declare it in the manifest
-
-Add **`redirect_page`** to the OAuth provider, under `product_config.<product>.oauth_config.<provider>`:
-
-```json
-"product_config": {
-  "surveysparrow": {
-    "oauth_config": {
-      "googleCalendar": {
-        "client_id": "...",
-        "client_secret": "...",
-        "authorize_url": "https://accounts.google.com/o/oauth2/auth",
-        "token_url": "https://oauth2.googleapis.com/token",
-        "redirect_page": "auth/redirect.html"
-      }
-    }
-  }
-}
-```
-
-| Rule | |
-|------|---|
-| Optional | Without it, nothing changes. |
-| Value | A path relative to `app-assets/public/`, following the [path rules](#rules-and-limits). |
-| Extension | Must end in `.html` or `.htm`. |
-| File | Must exist in `app-assets/public/` of the same release. `app validate`, `app pack` and the upload all reject a page that isn't there. |
-| Spelling | Exactly `redirect_page`, on the provider object. Don't put it inside `options` (those are sent to the provider). |
-
-### 3. Ask for it when you start a connection
-
-Pass **`useRedirectPage: true`** to `$oauth.getConnectUrl` or `$oauth.getReconnectUrl` (see the `$oauth` reference in the [backend function reference](appnest-functions/backend/README.md)):
-
-```javascript
-const { $oauth } = AppnestFunctions;
-
-const startConnect = async () => {
-  const { authorizeUrl } = await $oauth.getConnectUrl({
-    useRedirectPage: true,
-    includeFailureReason: true,   // optional: adds the failure reason to the result
-  });
-  return { authorizeUrl };        // open it in the user's browser
-};
-```
-
-- **Opt-in per connection attempt.** Declaring `redirect_page` doesn't change any connect call that doesn't pass `useRedirectPage: true`.
-- **Don't combine it with return URLs.** Passing `useRedirectPage: true` together with `returnUrl`, `returnUrlOnSuccess` or `returnUrlOnFailure` is rejected with a 400 error.
-- **The live release must declare a page.** If it doesn't, the call is rejected with a 400 error (`OAUTH_REDIRECT_PAGE_NOT_DECLARED`).
-- `afterConnect` still works. If your after-connect function returns a usable `redirectUrl`, the user goes there instead of your page.
-
-### 4. Read the result on the page
-
-The platform finishes the token exchange itself, then opens your page with the result in the **URL fragment** (after `#`). No code, token or state is ever added to the URL, and the query string is empty.
-
-| Result | Fragment |
-|--------|----------|
-| Connected | `#oauth=success` |
-| Failed or rejected | `#oauth=error` |
-| Failed, with `includeFailureReason: true` | `#oauth=error&reason=<code>` |
-
-`<code>` is one of the `$oauth` failure codes (e.g. `PROVIDER_ERROR`, `EXCHANGE_FAILED`, `TIMEOUT`).
-
-```html
-<!-- app-assets/public/auth/redirect.html -->
-<!doctype html>
-<html>
-  <body>
-    <p id="msg">Finishing…</p>
-    <script>
-      const params = new URLSearchParams(window.location.hash.slice(1));
-      const ok = params.get('oauth') === 'success';
-      const reason = params.get('reason');   // null unless includeFailureReason was set
-      document.getElementById('msg').textContent = ok
-        ? 'Connected. You can close this window.'
-        : 'Connection failed' + (reason ? ` (${reason})` : '') + '. Please try again.';
-    </script>
-  </body>
-</html>
-```
-
-**Rules for the page**
-
-- **Redirect only to fixed targets** you control. Never redirect to a URL taken from the page's own query string or fragment.
-- **Don't rely on the fragment for anything sensitive.** It only says whether the connection worked. Read the connection itself from your backend with `$oauth.list()` / `$oauth.get()`.
-- **The user always lands on the page of the release that is live when they come back.** If you release a new version during someone's login, they land on the new release's page. Keep the page's behaviour compatible across releases.
-- **If the live release no longer declares a page**, users who were mid-login land on the platform's default page instead. The connection is still saved.
-
----
-
 ## Local development and packing
 
 ### `app start`
@@ -341,6 +243,6 @@ http://localhost:<port>/app-assets/public/<path>
 
 ### `app validate` and `app pack`
 
-- `app validate` checks every [rule](#rules-and-limits) and the manifest's `redirect_page`, lists **every** problem, and exits with code **1** if there are any.
+- `app validate` checks every [rule](#rules-and-limits), lists **every** problem, and exits with code **1** if there are any.
 - `app pack` runs the same checks and adds **`app-assets/public/`** to the zip **as-is**, next to `app-frontend/`, `app-backend/` and `manifest.json`. You don't need `PACK_FOLDER_PATHS` for it.
 - Upload the zip as usual. Assets go live together with the code of that release; there is no separate asset upload.
