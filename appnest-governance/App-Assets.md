@@ -52,7 +52,7 @@ your-app/
 | Number of files | At most **500** |
 | File types and nesting | Any |
 | Path length | At most **256** characters (relative to `app-assets/public/`) |
-| Path contents | No `..` folder (`a/../b`; a name like `v1..2.png` is fine), no `\` (use `/` between folders), no leading `/`, and no `app-runtime` folder anywhere in the path |
+| Path contents | No `.` or `..` folder (`./a`, `a/../b`; a name like `v1..2.png` is fine), no `\` (use `/` between folders), no leading `/`, and no `app-runtime` folder anywhere in the path |
 | Hidden files and folders (names starting with `.`, e.g. `.env`) | Rejected |
 | `.DS_Store` files | Ignored: never packed or uploaded |
 | Symbolic links | Rejected |
@@ -95,7 +95,7 @@ const { $asset } = AppnestFunctions;
 
 The shapes follow [`$file`](appnest-functions/backend/file.md) (`{ path }` in, `{ keys }` / `{ exists }` out), but `$asset` has no `visibility`: every asset is public. Results are returned directly, with no `{ data, status }` wrapper.
 
-**Path rules (every method):** `path` is a string relative to `app-assets/public/`. A path containing a `..` folder or `\`, starting with `/`, or starting with a URL scheme (e.g. `https://`) throws an `Error`.
+**Path rules (every method):** `path` is a string relative to `app-assets/public/`. A path containing a `.` or `..` folder or `\`, starting with `/`, or starting with a URL scheme (e.g. `https://`) throws an `Error`.
 
 ### getUrl
 
