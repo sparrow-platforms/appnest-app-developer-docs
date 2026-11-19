@@ -52,8 +52,9 @@ your-app/
 | Number of files | At most **500** |
 | File types and nesting | Any |
 | Path length | At most **256** characters (relative to `app-assets/public/`) |
-| Path contents | No `..`, no leading `/`, and no `app-runtime` folder anywhere in the path |
-| Hidden files (names starting with `.`, e.g. `.env`, `.DS_Store`) | Rejected |
+| Path contents | No `..` folder (`a/../b`; a name like `v1..2.png` is fine), no `\` (use `/` between folders), no leading `/`, and no `app-runtime` folder anywhere in the path |
+| Hidden files and folders (names starting with `.`, e.g. `.env`) | Rejected |
+| `.DS_Store` files | Ignored: never packed or uploaded |
 | Symbolic links | Rejected |
 | Empty folders | Ignored |
 | Names that differ only in case (`Logo.png` and `logo.png`) | Rejected |
@@ -94,7 +95,7 @@ const { $asset } = AppnestFunctions;
 
 The shapes follow [`$file`](appnest-functions/backend/file.md) (`{ path }` in, `{ keys }` / `{ exists }` out), but `$asset` has no `visibility`: every asset is public. Results are returned directly, with no `{ data, status }` wrapper.
 
-**Path rules (every method):** `path` is a string relative to `app-assets/public/`. A path containing `..` or `\`, starting with `/`, or starting with a URL scheme (e.g. `https://`) throws an `Error`.
+**Path rules (every method):** `path` is a string relative to `app-assets/public/`. A path containing a `..` folder or `\`, starting with `/`, or starting with a URL scheme (e.g. `https://`) throws an `Error`.
 
 ### getUrl
 
@@ -142,6 +143,7 @@ const { exists } = await $asset.exists({ path: 'images/logo.png' });
 | Error | When |
 |-------|------|
 | `AssetsNotAvailableError` (`error.code === 'ASSETS_NOT_AVAILABLE'`) | The running release has no `app-assets/public/` folder. Thrown by **every** method, including `getUrl` and `getBaseUrl`. |
+| `AssetsListUnavailableError` (`error.code === 'ASSETS_LIST_UNAVAILABLE'`) | `list` / `exists` on an installation whose account has no product key, so the platform sends no token for the assets index. `getUrl` and `getBaseUrl` still work. |
 | `Error` (path message) | `path` is missing, not a string, or breaks the path rules above. |
 | Rejected promise from `list` / `exists` | The platform couldn't answer. `error.response.status` is the HTTP status. Calling again retries. |
 
