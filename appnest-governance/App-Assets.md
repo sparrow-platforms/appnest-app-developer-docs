@@ -232,7 +232,7 @@ To pass many files, return `$asset.getBaseUrl()` once and join relative paths to
 
 ### `app start`
 
-`appnest-development-engine app start` serves your local `app-assets/public/` folder through the local proxy:
+`appnest-development-engine app start` serves your local `app-assets/public/` folder through the local proxy, on the same port as `/app-backend` and `/app-frontend`:
 
 ```text
 http://localhost:<port>/app-assets/public/<path>
@@ -240,8 +240,22 @@ http://localhost:<port>/app-assets/public/<path>
 
 (`<port>` is `APPNEST_ENGINE_PORT`, default 3456; see [configuration.md](appnest-development-engine/configuration.md#local-urls).)
 
-- `$asset.getUrl` and `getBaseUrl` return these local URLs, and `list` and `exists` read the local folder as it is, so files you add show up right away. The same backend code works locally and after deploy.
+Your development app's frontend is opened by other users, on other machines, through the development app URL you registered (your tunnel to the local proxy, for example ngrok). So for events the platform sends to a development app, `$asset` URLs use that URL, not `localhost`:
+
+```text
+<development app URL>/app-assets/public/<path>
+```
+
+- `$asset.getUrl` and `getBaseUrl` return these tunnel URLs, so they work in your frontend, in emails and for other users, while `app start` and the tunnel are running. The engine prints the base URL in use the first time a backend function runs and whenever it changes.
+- `localhost` URLs are only a fallback, for a request that didn't come from the platform (for example one you send to `/app-backend/<function>` by hand); they work only on your machine.
+- `list` and `exists` read the local folder as it is, so files you add show up right away. The same backend code works locally and after deploy.
 - Locally there is no deploy, so the URL of a file stays the same between edits. After deploy it won't: don't let a URL you saw locally end up in your code.
+
+Keep in mind while you develop:
+
+- **The URLs change when your tunnel URL changes.** Re-register the new URL, as you already do for the backend; URLs handed out before that (in an email you sent, a page that is still open) stop working.
+- **Anyone with a URL can fetch your local assets while the tunnel is up**, the same as anyone with a URL can fetch public assets after deploy. Don't put anything in `app-assets/public/` that you wouldn't publish.
+- **A tunnel's browser warning page can get in the way.** ngrok's free plan, for example, shows a warning page to browsers before the first request goes through, so an image in an email or an `<img>` on another site may get that page instead of the file. Use a tunnel or plan without that page when you test such cases.
 
 ### `app validate` and `app pack`
 
