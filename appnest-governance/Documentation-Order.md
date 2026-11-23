@@ -19,7 +19,7 @@ Folders and files under `appnest-governance/` are **not** numbered. Use this lis
 ## 4. app-configuration
 
 6. [app-configuration/Manifest-Rules.md](app-configuration/Manifest-Rules.md) — `manifest.json` schema and rules (use for code generation).  
-7. [App-Assets.md](App-Assets.md) — static files in `app-assets/public/`, and `$asset`.
+7. [App-Assets.md](App-Assets.md) — static files in `app-assets/public/`, `$asset`, and the OAuth redirect page.
 
 ## 5. Frontend (read before generating UI)
 
