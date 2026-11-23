@@ -19,7 +19,7 @@ const { $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;
 
 - **Destructure from `AppnestFunctions`**, not from the package root. `const { $db } = require('@sparrowengg/appnest-app-sdk-utils')` is incorrect.
 - **Do not add `@sparrowengg/appnest-app-sdk-utils` to `app-backend/package.json`.** The platform provides it at runtime.
-- **Use these modules for all backend I/O** — no `axios`, `fetch`, or other HTTP/storage clients.
+- **Use these modules for all backend I/O** — no `axios`, `fetch`, or other HTTP/storage clients. The one exception: read an app asset's contents by calling `fetch` on a URL from `$asset.getUrl()` ([App assets](../../App-Assets.md#reading-a-files-contents)), because `$fetch` can't reach the asset host.
 - Import only the modules you need.
 
 ---

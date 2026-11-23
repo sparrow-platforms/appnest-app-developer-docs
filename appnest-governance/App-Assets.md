@@ -21,7 +21,7 @@ your-app/
     └── public/              ← everything here is published as-is
         ├── images/logo.png
         ├── templates/welcome.html
-        ├── auth/redirect.html
+        ├── pages/help.html
         └── docs/guide.pdf
 ```
 
@@ -143,7 +143,7 @@ const { exists } = await $asset.exists({ path: 'images/logo.png' });
 | Error | When |
 |-------|------|
 | `AssetsNotAvailableError` (`error.code === 'ASSETS_NOT_AVAILABLE'`) | The running release has no `app-assets/public/` folder. Thrown by **every** method, including `getUrl` and `getBaseUrl`. |
-| `AssetsListUnavailableError` (`error.code === 'ASSETS_LIST_UNAVAILABLE'`) | `list` / `exists` on an installation whose account has no product key, so the platform sends no token for the assets index. `getUrl` and `getBaseUrl` still work. |
+| `AssetsListUnavailableError` (`error.code === 'ASSETS_LIST_UNAVAILABLE'`) | `list` / `exists` aren't available for this installation. `getUrl` and `getBaseUrl` still work. |
 | `Error` (path message) | `path` is missing, not a string, or breaks the path rules above. |
 | Rejected promise from `list` / `exists` | The platform couldn't answer. `error.response.status` is the HTTP status. Calling again retries. |
 
@@ -160,36 +160,40 @@ try {
 
 ### Reading a file's contents
 
-`$asset` has no "get content" method. Fetch the URL like any other HTTP resource with [`$fetch`](appnest-functions/backend/fetch.md):
+`$asset` has no "get content" method. Fetch the URL from `getUrl` yourself, with Node's built-in `fetch` (nothing to add to `package.json`):
 
 ```javascript
-const { $asset, $fetch } = AppnestFunctions;
+const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
+const { $asset } = AppnestFunctions;
 
-const loadTemplate = async (path) => {
-  const res = await $fetch.request({ url: $asset.getUrl({ path }), method: 'GET' });
-  if (res.status !== 200) throw new Error(`Asset ${path} returned ${res.status}`);
-  return res.body;   // the file's contents
+const readAsset = async (path) => {
+  const res = await fetch($asset.getUrl({ path }));
+  if (!res.ok) throw new Error(`Asset ${path} returned HTTP ${res.status}`);
+  return res.text();   // res.json() for JSON; Buffer.from(await res.arrayBuffer()) for binary files
 };
-
-const welcomeHtml = await loadTemplate('templates/welcome.html');
 ```
 
-The contents of a URL never change within a release, so you may cache what you fetched for as long as your function runs.
+- **Use `fetch` here, not [`$fetch`](appnest-functions/backend/fetch.md).** `$fetch` only reaches the domains your app declares, and the asset host isn't one of them. Fetching a URL that `$asset.getUrl()` returned (or one joined to `getBaseUrl()`) is the **only** exception to the rule that backend I/O goes through Appnest functions. For every other URL, keep using `$fetch`.
+- `getUrl` doesn't check that the file exists, so a wrong path gives **HTTP 404**. Check `res.ok` as above, or call [`exists`](#exists) first.
+- The same code works under `app start`, where the URL points at your local folder.
+- **Caching:** a URL's contents never change, and a new release gets new URLs, so you can cache what you read **by URL** (for example in a module-level `Map`). Locally a file keeps its URL while you edit it, so a cached copy can be out of date until you restart `app start`.
 
 ### Example: an email with a logo
 
 ```javascript
 const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
-const { $asset, $fetch } = AppnestFunctions;
+const { $asset } = AppnestFunctions;
+
+const escapeHtml = (text) => String(text).replace(/[&<>"']/g, (c) => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+));
 
 const buildWelcomeEmail = async ({ payload }) => {
-  const res = await $fetch.request({
-    url: $asset.getUrl({ path: 'templates/welcome.html' }),
-    method: 'GET',
-  });
-  const html = res.body
-    .replace('{{logoUrl}}', $asset.getUrl({ path: 'images/logo.png' }))
-    .replace('{{name}}', payload.name);
+  const res = await fetch($asset.getUrl({ path: 'templates/welcome.html' }));
+  if (!res.ok) throw new Error(`Welcome template returned HTTP ${res.status}`);
+  const html = (await res.text())
+    .replaceAll('{{logoUrl}}', () => $asset.getUrl({ path: 'images/logo.png' }))
+    .replaceAll('{{name}}', () => escapeHtml(payload.name));
   return { html };
 };
 
@@ -212,6 +216,9 @@ The frontend can't call `$asset`. Return the URLs from a backend function and us
 
 ```javascript
 // app-backend: exported from server.js and declared in backend_api_functions
+const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
+const { $asset } = AppnestFunctions;
+
 const getBranding = async () => ({
   logoUrl: $asset.getUrl({ path: 'images/logo.png' }),
   guideUrl: $asset.getUrl({ path: 'docs/guide.pdf' }),
@@ -224,7 +231,7 @@ const { body } = await window.AppnestFunctions.$app.backend({ functionName: 'get
 // <img src={body.logoUrl} />
 ```
 
-To pass many files, return `$asset.getBaseUrl()` once and join relative paths to it in the frontend. Fetch the URLs fresh each time the UI loads; don't save them.
+To pass many files, return `$asset.getBaseUrl()` once and join relative paths to it in the frontend. Encode each folder and file name with `encodeURIComponent` when you join (`'images/' + encodeURIComponent('my logo.png')`), as `getUrl` does, so names with spaces, `#` or `?` still work. Fetch the URLs fresh each time the UI loads; don't save them.
 
 ---
 
