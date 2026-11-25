@@ -29,7 +29,7 @@ your-app/
 - **Paths are relative to `app-assets/public/`.** The file above is `images/logo.png`, never `public/images/logo.png` or `app-assets/public/images/logo.png`.
 - Files are published **exactly as you ship them**. There is no build step, minification or image processing.
 - Assets are **read-only** at runtime and fixed for a release. To store files your app creates or users upload, use [`$file`](appnest-functions/backend/file.md).
-- **HTML files render as web pages** in the browser (they are not downloaded), so you can ship pages that run on their own. SVG files render too. Every file is served with the content type that matches its extension, and browsers are told not to guess a different type.
+- **HTML files render as web pages** in the browser (they are not downloaded), so you can ship pages that run on their own. SVG files render too. Every file is served with the content type that matches its **file extension**, so give each file the right extension. Text files (HTML, CSS, JavaScript, JSON, plain text and so on) are served as UTF-8 (`; charset=utf-8`), so save them in UTF-8.
 
 ### When to use `app-assets/` and when to use `app-frontend/`
 
@@ -53,6 +53,7 @@ your-app/
 | File types and nesting | Any |
 | Path length | At most **256** characters (relative to `app-assets/public/`) |
 | Path contents | No `.` or `..` folder (`./a`, `a/../b`; a name like `v1..2.png` is fine), no `\` (use `/` between folders), no leading `/`, and no `app-runtime` folder anywhere in the path |
+| Paths that start like a URL scheme (`v1:logo.png`) | Rejected when you upload, and by `$asset`. Don't put `:` in the first folder or file name |
 | Hidden files and folders (names starting with `.`, e.g. `.env`) | Rejected |
 | `.DS_Store` files | Ignored: never packed or uploaded |
 | Symbolic links | Rejected |
@@ -95,7 +96,7 @@ const { $asset } = AppnestFunctions;
 
 The shapes follow [`$file`](appnest-functions/backend/file.md) (`{ path }` in, `{ keys }` / `{ exists }` out), but `$asset` has no `visibility`: every asset is public. Results are returned directly, with no `{ data, status }` wrapper.
 
-**Path rules (every method):** `path` is a string relative to `app-assets/public/`. A path containing a `.` or `..` folder or `\`, starting with `/`, or starting with a URL scheme (e.g. `https://`) throws an `Error`.
+**Path rules (every method):** `path` is a string relative to `app-assets/public/`. A path containing a `.` or `..` folder, an empty folder name (`images//logo.png`) or `\`, starting with `/`, or starting like a URL scheme (`v1:logo.png`, `https://…`) throws an `Error`. For `list`, a single trailing `/` on the folder prefix (`'templates/'`) is fine.
 
 ### getUrl
 
@@ -145,7 +146,7 @@ const { exists } = await $asset.exists({ path: 'images/logo.png' });
 | `AssetsNotAvailableError` (`error.code === 'ASSETS_NOT_AVAILABLE'`) | The running release has no `app-assets/public/` folder. Thrown by **every** method, including `getUrl` and `getBaseUrl`. |
 | `AssetsListUnavailableError` (`error.code === 'ASSETS_LIST_UNAVAILABLE'`) | `list` / `exists` aren't available for this installation. `getUrl` and `getBaseUrl` still work. |
 | `Error` (path message) | `path` is missing, not a string, or breaks the path rules above. |
-| Rejected promise from `list` / `exists` | The platform couldn't answer. `error.response.status` is the HTTP status. Calling again retries. |
+| `Error` from `list` / `exists` (`error.status`, `error.code`) | The list of this release's files couldn't be loaded. `error.status` is the HTTP status, or `null` if there was no response (the request times out after **10 seconds**); `error.code` is an error code, or `null`. Calling again retries. |
 
 If your app can run without assets, catch `AssetsNotAvailableError` and fall back:
 
@@ -255,7 +256,8 @@ Your development app's frontend is opened by other users, on other machines, thr
 
 - `$asset.getUrl` and `getBaseUrl` return these tunnel URLs, so they work in your frontend, in emails and for other users, while `app start` and the tunnel are running. The engine prints the base URL in use the first time a backend function runs and whenever it changes.
 - `localhost` URLs are only a fallback, for a request that didn't come from the platform (for example one you send to `/app-backend/<function>` by hand); they work only on your machine.
-- `list` and `exists` read the local folder as it is, so files you add show up right away. The same backend code works locally and after deploy.
+- `list` and `exists` read the local folder as it is, so files you add show up right away. They return only files that pass the [rules](#rules-and-limits), the same files `app start` serves, so every key `list` returns can be fetched. The same backend code works locally and after deploy.
+- Local serving supports HTTP Range requests, so audio and video play locally.
 - Locally there is no deploy, so the URL of a file stays the same between edits. After deploy it won't: don't let a URL you saw locally end up in your code.
 
 Keep in mind while you develop:

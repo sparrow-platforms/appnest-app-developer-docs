@@ -22,7 +22,7 @@ Standards and reference for Appnest apps: **execution flows**, **appnest-functio
 | | [configuration.md](appnest-development-engine/configuration.md) | App project layout, `.env` keys, local URLs |
 | **Execution and flows** | [Appnest-Execution-Flows.md](Appnest-Execution-Flows.md) | Trigger → handler → SDK → `ResultData`, principles, operation types, long-running flows |
 | **appnest-functions** | [Appnest-Functions.md](appnest-functions/Appnest-Functions.md) | Overview: backend/frontend AppnestFunctions; links to detailed references |
-| | [Backend function reference](appnest-functions/backend/README.md) | Full SDK reference (import, $db, $fetch, $file, $next, $schedule, getTraceId) |
+| | [Backend function reference](appnest-functions/backend/README.md) | Full SDK reference (import, $asset, $db, $fetch, $file, $next, $schedule, getTraceId) |
 | | [Frontend-Appnest-Functions.md](appnest-functions/Frontend-Appnest-Functions.md) | Client bridge: `client.js`, `window.AppnestFunctions` ($check, $app) |
 | **app-configuration** | [Manifest-Rules.md](app-configuration/Manifest-Rules.md) | Manifest rules + full schema (code-generation) |
 | **App assets** | [App-Assets.md](App-Assets.md) | Static files in `app-assets/public/`: rules and limits, `$asset` URLs from the backend, `start` / `pack` |
