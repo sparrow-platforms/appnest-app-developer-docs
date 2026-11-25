@@ -53,7 +53,7 @@ your-app/
 | File types and nesting | Any |
 | Path length | At most **256** characters (relative to `app-assets/public/`) |
 | Path contents | No `.` or `..` folder (`./a`, `a/../b`; a name like `v1..2.png` is fine), no `\` (use `/` between folders), no leading `/`, and no `app-runtime` folder anywhere in the path |
-| Paths that start like a URL scheme (`v1:logo.png`) | Rejected when you upload, and by `$asset`. Don't put `:` in the first folder or file name |
+| Paths that start like a URL scheme (`v1:logo.png`) | Rejected (also by `$asset`). Don't put `:` in the first folder or file name |
 | Hidden files and folders (names starting with `.`, e.g. `.env`) | Rejected |
 | `.DS_Store` files | Ignored: never packed or uploaded |
 | Symbolic links | Rejected |
