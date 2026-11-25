@@ -2,7 +2,7 @@
 
 > **Public developer docs.** Everything in this folder is published to the public `appnest-app-developer-docs` repository. Keep it to what app developers write and get back — no SDK internals.
 
-**Backend Appnest functions** are the platform-backed modules you call from your app's **backend** code (`app-backend/server.js` handlers): `$db`, `$fetch`, `$file`, `$next`, `$schedule`, and `getTraceId`. They are not separate deployable units — Appnest provides the implementation at runtime, and you call them with `await`.
+**Backend Appnest functions** are the platform-backed modules you call from your app's **backend** code (`app-backend/server.js` handlers): `$asset`, `$db`, `$fetch`, `$file`, `$next`, `$schedule`, and `getTraceId`. They are not separate deployable units — Appnest provides the implementation at runtime, and you call them with `await`.
 
 This page is the **index**: the import, the rules, and every method with its signature. Each module page has the full parameter rules, limits, and examples.
 
@@ -12,14 +12,14 @@ This page is the **index**: the import, the rules, and every method with its sig
 
 ```javascript
 const { AppnestFunctions } = require('@sparrowengg/appnest-app-sdk-utils');
-const { $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;
+const { $asset, $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;
 ```
 
 ## Rules
 
 - **Destructure from `AppnestFunctions`**, not from the package root. `const { $db } = require('@sparrowengg/appnest-app-sdk-utils')` is incorrect.
 - **Do not add `@sparrowengg/appnest-app-sdk-utils` to `app-backend/package.json`.** The platform provides it at runtime.
-- **Use these modules for all backend I/O** — no `axios`, `fetch`, or other HTTP/storage clients.
+- **Use these modules for all backend I/O** — no `axios`, `fetch`, or other HTTP/storage clients. The one exception: read an app asset's contents by calling `fetch` on a URL from `$asset.getUrl()` ([asset.md](asset.md#examples)), because `$fetch` can't reach the asset host.
 - Import only the modules you need.
 
 ---
@@ -28,6 +28,7 @@ const { $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;
 
 | Module | Purpose | Reference |
 |--------|---------|-----------|
+| **$asset** | URLs of the static files your app ships in `app-assets/public/`; list and check them | [asset.md](asset.md) |
 | **$db** | Key/value storage by type: string, number, list, map (with atomic nested-path operations), boolean | [db.md](db.md) |
 | **$fetch** | Outbound HTTP requests, with installation-parameter and OAuth token placeholders | [fetch.md](fetch.md) |
 | **$file** | File storage via signed URLs: upload, download, delete, list, exists | [file.md](file.md) |
@@ -39,9 +40,20 @@ const { $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;
 
 ## Method index
 
+### $asset — [asset.md](asset.md)
+
+`path` is relative to `app-assets/public/`. Every method throws `AssetsNotAvailableError` (`code: 'ASSETS_NOT_AVAILABLE'`) when the app version has no `app-assets/public/` folder.
+
+| Method | Signature | Returns |
+|--------|-----------|---------|
+| getUrl | `$asset.getUrl({ path })` | `string` (synchronous) |
+| getBaseUrl | `$asset.getBaseUrl()` | `string`, ends in `/` (synchronous) |
+| list | `$asset.list({ path? })` — `path`: folder, `''` lists everything | `Promise<{ keys: string[] }>` |
+| exists | `$asset.exists({ path })` | `Promise<{ exists: boolean }>` |
+
 ### $db — [db.md](db.md)
 
-`key` is required on every call: a non-empty string, max 1000 characters.
+`key` is required on every call: a non-empty string, max 255 characters.
 
 | Method | Signature | Returns |
 |--------|-----------|---------|
@@ -50,14 +62,19 @@ const { $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;
 | delete | `$db.delete({ key })` | `Promise<void>` |
 | typeOf | `$db.typeOf({ key })` | `Promise<string>` — `'map' \| 'list' \| 'number' \| 'string' \| 'boolean' \| 'null' \| 'absent'` |
 | byteSize | `$db.byteSize({ key })` | `Promise<number>` |
+| batchGet | `$db.batchGet({ keys, atomic? })` — up to 100 keys | `Promise<Array<{ key, found, type?, value? } \| { key, error }>>` |
+| batchSet | `$db.batchSet({ items, atomic? })` — `items`: `[{ key, type, value, condition? }]`, up to 25 (100 atomic) | `Promise<Array<{ key, ok, error? }>>`; atomic: `Promise<{ count }>` |
+| batchDelete | `$db.batchDelete({ keys, atomic? })` — up to 25 keys (100 atomic) | `Promise<Array<{ key, ok, error? }>>`; atomic: `Promise<{ count }>` |
 | string.get | `$db.string.get({ key })` | `Promise<string>` |
 | string.set | `$db.string.set({ key, value })` — `value`: string | `Promise<void>` |
 | string.delete | `$db.string.delete({ key })` | `Promise<void>` |
+| type.setIfAbsent | `$db.string\|number\|boolean\|list.setIfAbsent({ key, value })` | `Promise<void>` |
+| type.compareAndSet | `$db.string\|number\|boolean.compareAndSet({ key, expected, value })` | `Promise<void>` |
 | number.get | `$db.number.get({ key })` | `Promise<number>` |
 | number.set | `$db.number.set({ key, value })` — `value`: finite number | `Promise<void>` |
 | number.delete | `$db.number.delete({ key })` | `Promise<void>` |
-| number.increment | `$db.number.increment({ key, value? })` | `Promise<void>` |
-| number.decrement | `$db.number.decrement({ key, value? })` | `Promise<void>` |
+| number.increment | `$db.number.increment({ key, value? })` (`value` defaults to 1) | `Promise<number>` — new value |
+| number.decrement | `$db.number.decrement({ key, value? })` (`value` defaults to 1) | `Promise<number>` — new value |
 | list.get | `$db.list.get({ key })` | `Promise<array>` |
 | list.set | `$db.list.set({ key, value })` — `value`: array | `Promise<void>` |
 | list.append | `$db.list.append({ key, value })` — `value`: array | `Promise<void>` |
@@ -69,18 +86,24 @@ const { $db, $fetch, $file, $next, $schedule, getTraceId } = AppnestFunctions;
 | map.delete | `$db.map.delete({ key })` | `Promise<void>` |
 | map.updateItem | `$db.map.updateItem({ key, path, value })` | `Promise<void>` |
 | map.removeItem | `$db.map.removeItem({ key, path, recursive? })` | `Promise<void>` |
-| map.increment | `$db.map.increment({ key, path, value })` | `Promise<void>` |
-| map.decrement | `$db.map.decrement({ key, path, value })` | `Promise<void>` |
+| map.increment | `$db.map.increment({ key, path, value })` | `Promise<number>` — new value |
+| map.decrement | `$db.map.decrement({ key, path, value })` | `Promise<number>` — new value |
 | map.append | `$db.map.append({ key, path, value })` — `value`: non-empty array | `Promise<void>` |
 | map.prepend | `$db.map.prepend({ key, path, value })` — `value`: non-empty array | `Promise<void>` |
 | map.apply | `$db.map.apply({ key, ops })` — atomic batch | `Promise<void>` |
 | map.typeOf | `$db.map.typeOf({ key, path })` | `Promise<string>` |
 | map.byteSize | `$db.map.byteSize({ key, path })` | `Promise<number>` |
+| map.setIfAbsent | `$db.map.setIfAbsent({ key, path?, value })` | `Promise<void>` |
+| map.compareAndSet | `$db.map.compareAndSet({ key, path, expected, value })` | `Promise<void>` |
 | boolean.get | `$db.boolean.get({ key })` | `Promise<boolean>` |
 | boolean.set | `$db.boolean.set({ key, value })` — `value`: boolean | `Promise<void>` |
 | boolean.delete | `$db.boolean.delete({ key })` | `Promise<void>` |
 
 `path` is an array of map keys (strings) and, as the last segment only, a list index (non-negative integer) — see [Nested paths](db.md#nested-paths).
+
+`setIfAbsent` / `compareAndSet` write only if nothing is stored yet / the stored value equals `expected` — see [Conditional writes](db.md#conditional-writes--setifabsent-and-compareandset).
+
+`batchGet` / `batchSet` / `batchDelete` handle many keys in one call: best effort with a result per key by default, all or nothing with `atomic: true` — see [Batch operations](db.md#batch-operations--batchget-batchset-and-batchdelete).
 
 ### $fetch — [fetch.md](fetch.md)
 
@@ -139,7 +162,8 @@ All methods return the result directly — there is no `{ data, status }` wrappe
 
 | Module | Returns |
 |--------|---------|
-| **$db** | Reads return the stored value (string, number, array, object, boolean); `typeOf` returns a type label and `byteSize` a number. Writes and deletes return nothing. |
+| **$asset** | `getUrl` and `getBaseUrl` return a URL string; `list` returns `{ keys }` and `exists` returns `{ exists }`. |
+| **$db** | Reads return the stored value (string, number, array, object, boolean); `typeOf` returns a type label and `byteSize` a number. Writes and deletes return nothing, except `increment` / `decrement`, which return the new value. Batch methods return one result per key, or `{ count }` for an atomic write. |
 | **$fetch** | `{ headers, body, status }` of the outbound response. |
 | **$file** | A small result object, e.g. `{ preSignedUrl }`, `{ deleted }`, `{ keys }`, `{ exists }`. |
 | **$next** | The response body, e.g. `{ success: true }`. |
@@ -147,7 +171,7 @@ All methods return the result directly — there is no `{ data, status }` wrappe
 
 On invalid input every method throws an `Error` with a message describing the problem (e.g. `Key must be a non-empty string`).
 
-If the platform rejects a call, the promise rejects with an error whose `response.status` is the HTTP status and `response.data.message` is the reason. For example, `$schedule` uses `404` when no job with that `jobName` exists and `409` when `create` uses a `jobName` that's already taken. See [schedule.md](schedule.md#api).
+If the platform rejects a call, the promise rejects with an error whose `response.status` is the HTTP status and `response.data.message` is the reason. For `$db`, a failed `setIfAbsent` / `compareAndSet` condition (also inside `map.apply` or an atomic batch) rejects with an error whose `code` is `CONDITION_FAILED` (with `status`, `key`, `path`, `current`, and `index` for a batch), and an atomic batch that concurrent writes keep cancelling rejects with `code: 'TRANSACTION_CONFLICT'` (with `status`, `index`, `key`); see [db.md](db.md#conditional-writes--setifabsent-and-compareandset) and [Batch operations](db.md#batch-operations--batchget-batchset-and-batchdelete). Every other error keeps the shape above. For example, `$schedule` uses `404` when no job with that `jobName` exists and `409` when `create` uses a `jobName` that's already taken. See [schedule.md](schedule.md#api).
 
 ---
 
